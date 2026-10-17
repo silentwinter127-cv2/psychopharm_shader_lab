@@ -1,0 +1,2973 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Psychopharmacological Art Shader Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23a855f7'/%3E%3C/svg%3E" />
+  <!-- Tailwind 已本地化，离线也能正确渲染界面 -->
+  <script src="/static/vendor/tailwindcss-3.4.17.js"></script>
+  <style>
+    body { background: #090a0f; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f111a; }
+    ::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
+    .glass { background: rgba(17, 20, 32, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    input[type="range"] { accent-color: #a855f7; }
+    canvas { display: block; }
+  </style>
+</head>
+<body class="h-screen overflow-hidden flex flex-col">
+
+  <!-- 顶部导航栏 -->
+  <header class="min-h-14 border-b border-white/10 px-3 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2 bg-[#0c0e17] shrink-0">
+    <div class="flex items-center gap-3 min-w-0 flex-1">
+      <div class="w-3 h-3 shrink-0 rounded-full bg-purple-500 shadow-[0_0_12px_#a855f7]"></div>
+      <h1 class="hidden truncate font-semibold tracking-wide text-sm sm:block md:text-base">
+        PSYCHOPHARMACOLOGICAL ART SHADER
+        <span class="hidden text-xs font-mono text-purple-400 md:inline ml-2">Python PK-PD + WebGL2 Ping-Pong Engine</span>
+      </h1>
+      <span class="font-mono text-[11px] text-purple-300 sm:hidden">PSY</span>
+    </div>
+    <div class="flex items-center gap-1.5 sm:gap-2 text-xs shrink-0 ml-auto">
+      <button id="btn-source-synth" class="px-2 sm:px-3 py-1.5 rounded bg-purple-600/30 border border-purple-500/50 text-purple-200 hover:bg-purple-600/50 whitespace-nowrap">内置测试源</button>
+      <label class="px-2 sm:px-3 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 cursor-pointer whitespace-nowrap">
+        上传图片
+        <input id="file-upload" type="file" accept="image/*" class="hidden" />
+      </label>
+      <button id="btn-video" class="px-2 sm:px-3 py-1.5 rounded bg-rose-600/20 border border-rose-500/40 text-rose-200 hover:bg-rose-600/40 whitespace-nowrap"><span class="hidden sm:inline">导入视频</span><span class="sm:hidden">视频</span></button>
+      <input id="video-upload" type="file" accept="video/*" class="hidden" />
+      <button id="btn-webcam" class="px-2 sm:px-3 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 whitespace-nowrap">开启摄像头</button>
+      <button id="btn-reference" class="px-2 sm:px-3 py-1.5 rounded bg-cyan-600/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-600/40 whitespace-nowrap"><span class="hidden sm:inline">效应参考集</span><span class="sm:hidden">参考集</span></button>
+      <button id="btn-export" class="px-2 sm:px-3 py-1.5 rounded bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/40 whitespace-nowrap">导出作品</button>
+    </div>
+  </header>
+
+  <!-- 主工作区：移动端纵向堆叠，lg 以上三栏网格 -->
+  <main class="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-3 p-3 overflow-y-auto lg:overflow-hidden min-h-0">
+
+    <!-- 左栏：PsychonautWiki Journal 风格摄入记录与 PK 时间轴 (4列) -->
+    <section class="order-1 lg:col-span-4 flex flex-col gap-3 lg:min-h-0 lg:overflow-y-auto lg:pr-1">
+      <!-- 添加摄入记录 -->
+      <div class="glass rounded-xl p-4 space-y-3 shrink-0">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-purple-400">01 · 摄入时间轴记录 (Ingestion Log)</h2>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="btn-clear-ingestions" class="text-[11px] text-slate-400 hover:text-rose-300">清空</button>
+            <button id="btn-preset-candyflip" class="text-[11px] text-amber-300 hover:underline">载入协同示例 (LSD + MDMA + K)</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label class="text-slate-400 block mb-1" for="sel-substance">物质 (Substance)</label>
+            <select id="sel-substance" class="w-full bg-black/50 border border-white/15 rounded px-2 py-1.5 text-slate-200"></select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1" for="sel-roa">给药途径 (ROA)</label>
+            <select id="sel-roa" class="w-full bg-black/50 border border-white/15 rounded px-2 py-1.5 text-slate-200"></select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1" for="inp-dose">剂量 (<span id="lbl-unit">μg</span>)</label>
+            <input id="inp-dose" type="number" value="100" min="0.1" step="5" class="w-full bg-black/50 border border-white/15 rounded px-2 py-1.5 text-slate-200" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1" for="inp-time">摄入时刻 (T+ 分钟)</label>
+            <input id="inp-time" type="number" value="0" min="0" max="1440" step="15" class="w-full bg-black/50 border border-white/15 rounded px-2 py-1.5 text-slate-200" />
+          </div>
+        </div>
+
+        <button id="btn-add-ingestion" class="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition">
+          + 添加摄入事件 (Add Ingestion)
+        </button>
+
+        <!-- 已添加记录列表 -->
+        <div id="ingestion-list" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
+      </div>
+
+      <!-- 药代动力学曲线画布与时间游标 -->
+      <div class="glass rounded-xl p-4 space-y-3 flex-1 flex flex-col lg:min-h-0">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400">02 · 实时药代动力学曲线 C(t) &amp; 协同矩阵</h2>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="btn-play-time" class="px-2 py-0.5 text-[11px] rounded bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">▶ 自动演化</button>
+            <span id="lbl-current-time" class="font-mono text-xs text-amber-300">T+ 120 min (02:00)</span>
+          </div>
+        </div>
+
+        <canvas id="pk-chart" class="w-full h-44 bg-black/40 rounded-lg border border-white/10 cursor-ew-resize"></canvas>
+
+        <div>
+          <input id="slider-time" type="range" min="0" max="600" step="1" value="120" class="w-full" aria-label="时间轴游标" />
+          <div id="time-axis" class="flex justify-between text-[10px] text-slate-500 font-mono">
+            <span>T+ 0m</span><span>T+ 150m</span><span>T+ 300m</span><span>T+ 450m</span><span>T+ 600m</span>
+          </div>
+        </div>
+
+        <!-- 受体激活负载与协同指数 -->
+        <div class="grid grid-cols-4 gap-1.5 pt-1 text-center">
+          <div class="bg-black/40 p-2 rounded border border-white/5">
+            <div class="text-[10px] text-slate-400">5-HT2A 负荷</div>
+            <div id="val-5ht2a" class="font-mono text-xs text-purple-400 mt-0.5">0.00</div>
+          </div>
+          <div class="bg-black/40 p-2 rounded border border-white/5">
+            <div class="text-[10px] text-slate-400">NMDA 拮抗</div>
+            <div id="val-nmda" class="font-mono text-xs text-cyan-400 mt-0.5">0.00</div>
+          </div>
+          <div class="bg-black/40 p-2 rounded border border-white/5">
+            <div class="text-[10px] text-slate-400">SERT 释放</div>
+            <div id="val-sert" class="font-mono text-xs text-pink-400 mt-0.5">0.00</div>
+          </div>
+          <div class="bg-black/40 p-2 rounded border border-amber-500/20">
+            <div class="text-[10px] text-amber-300">多物质协同度</div>
+            <div id="val-synergy" class="font-mono text-xs text-amber-400 font-bold mt-0.5">0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 中栏：WebGL2 实时多通道渲染视口 (5列) -->
+    <section class="order-2 lg:col-span-5 flex flex-col gap-3 lg:min-h-0">
+      <div class="glass rounded-xl p-2 flex-1 flex flex-col relative overflow-hidden min-h-[340px]">
+        <canvas id="gl-canvas" width="720" height="540" class="w-full h-full object-contain rounded-lg bg-black"></canvas>
+        <button id="btn-cubism-demo" class="absolute right-4 top-4 z-10 rounded-lg border border-rose-500/40 bg-black/65 px-2.5 py-1 text-[10px] text-rose-200 backdrop-blur hover:bg-rose-600/30">空间立体主义 ▶</button>
+        <!-- 左上角实时 HUD -->
+        <div class="absolute top-4 left-4 bg-black/70 backdrop-blur px-3 py-2 rounded-lg border border-white/10 text-[11px] font-mono space-y-0.5 pointer-events-none">
+          <div class="text-purple-300 font-semibold" id="hud-mode">MODE: PK-PD DRIVEN</div>
+          <div id="hud-summary" class="text-slate-300">warp: 0.00 | sym: 6 | rgb: 0.00 | trail: 0.00</div>
+          <div id="hud-extra" class="text-rose-300/80">cub:0.00 | vortex:0.00 | shatter:0.00</div>
+          <div id="hud-engine" class="text-slate-500">engine: booting…</div>
+          <div id="hud-video" class="hidden max-w-[360px] truncate text-rose-300"></div>
+        </div>
+        <!-- WebGL 失败提示 -->
+        <div id="gl-error" class="hidden absolute inset-0 z-10 flex items-center justify-center bg-black/85 p-6 text-center text-xs leading-relaxed text-rose-300"></div>
+      </div>
+
+      <!-- 结构化体验档案抽屉 (对应文档第三节) -->
+      <div class="glass rounded-xl p-3.5 h-60 shrink-0 overflow-y-auto space-y-2">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">03 · 视觉现象学研究档案库 (Structured Experience Archive)</h3>
+          <select id="sel-archive" class="bg-black/60 border border-white/15 rounded px-2 py-1 text-xs text-emerald-300 max-w-[45%]"></select>
+        </div>
+        <div id="archive-detail" class="text-xs space-y-1 text-slate-300 leading-snug"></div>
+      </div>
+    </section>
+
+    <!-- 右栏：视觉现象学算子控制台 (3列) -->
+    <section class="order-3 lg:col-span-3 glass rounded-xl p-4 flex flex-col justify-between gap-4 lg:min-h-0 lg:overflow-y-auto">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2 gap-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-pink-400">04 · 视觉现象学算子栈</h2>
+          <label class="flex items-center gap-1.5 text-xs cursor-pointer shrink-0">
+            <input id="chk-manual" type="checkbox" class="rounded" />
+            <span class="text-amber-300">手动覆盖 (Override)</span>
+          </label>
+        </div>
+
+        <!-- 算子滑块组 -->
+        <div id="operator-sliders" class="space-y-3 text-xs">
+          <!-- 01 几何化与图案生成 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 space-y-2">
+            <div class="font-semibold text-purple-300">01 · Pattern Formation (几何化)</div>
+            <div>
+              <div class="flex justify-between"><span>对称阶数 (Symmetry Order)</span><span id="lbl-symmetry_order" class="font-mono">1</span></div>
+              <input data-param="symmetry_order" type="range" min="1" max="16" step="1" value="1" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>图案分形密度 (Pattern Density)</span><span id="lbl-pattern_density" class="font-mono">0.00</span></div>
+              <input data-param="pattern_density" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+
+          <!-- 02 空间扭曲与流动 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 space-y-2">
+            <div class="font-semibold text-cyan-300">02 · Spatial Warping (空间扭曲)</div>
+            <div>
+              <div class="flex justify-between"><span>扭曲振幅 (Warp Amplitude)</span><span id="lbl-warp_amplitude" class="font-mono">0.00</span></div>
+              <input data-param="warp_amplitude" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>空间频率 (Warp Frequency)</span><span id="lbl-warp_frequency" class="font-mono">2.00</span></div>
+              <input data-param="warp_frequency" type="range" min="1" max="8" step="0.1" value="2" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>场景切片 (Scenery Slice)</span><span id="lbl-scenery_slice" class="font-mono">0.00</span></div>
+              <input data-param="scenery_slice" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+
+          <!-- 03 色彩分离与光谱异常 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 space-y-2">
+            <div class="font-semibold text-pink-300">03 · Chromatic Distortion (光谱异常)</div>
+            <div>
+              <div class="flex justify-between"><span>RGB 通道色散 (RGB Displacement)</span><span id="lbl-rgb_displacement" class="font-mono">0.00</span></div>
+              <input data-param="rgb_displacement" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>色相流场偏移 (Hue Shift)</span><span id="lbl-hue_shift" class="font-mono">0.00</span></div>
+              <input data-param="hue_shift" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+
+          <!-- 04 视觉残留与时间叠影 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 space-y-2">
+            <div class="font-semibold text-amber-300">04 · Temporal Persistence (帧反馈残影)</div>
+            <div>
+              <div class="flex justify-between"><span>历史帧衰减率 (Feedback Decay)</span><span id="lbl-feedback_decay" class="font-mono">0.00</span></div>
+              <input data-param="feedback_decay" type="range" min="0" max="0.95" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>复视偏移 (Diplopia Offset)</span><span id="lbl-diplopia_offset" class="font-mono">0.00</span></div>
+              <input data-param="diplopia_offset" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+
+          <!-- 05 边界异常与模拟信号故障 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 space-y-2">
+            <div class="font-semibold text-emerald-300">05 · Boundary &amp; Analog Glitch</div>
+            <div>
+              <div class="flex justify-between"><span>轮廓解构与重组 (Edge Reorg)</span><span id="lbl-edge_reorg" class="font-mono">0.00</span></div>
+              <input data-param="edge_reorg" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>模拟信号串扰 (Analog Glitch)</span><span id="lbl-analog_glitch" class="font-mono">0.00</span></div>
+              <input data-param="analog_glitch" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+
+          <!-- 06 空间立体主义与空间断裂 -->
+          <div class="p-2.5 rounded-lg bg-white/[0.03] border border-rose-500/20 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="font-semibold text-rose-300">06 · Cubism &amp; Spatial Fracture</div>
+              <button id="btn-preset-cubism" class="rounded border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 text-[10px] text-rose-200 hover:bg-rose-500/20">示例</button>
+            </div>
+            <div>
+              <div class="flex justify-between"><span>空间立体主义 (Cubist Facets)</span><span id="lbl-cubism" class="font-mono">0.00</span></div>
+              <input data-param="cubism" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>漩涡隧道 (Vortex Tunnel)</span><span id="lbl-vortex" class="font-mono">0.00</span></div>
+              <input data-param="vortex" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+            <div>
+              <div class="flex justify-between"><span>碎片化晶格 (Voronoi Shatter)</span><span id="lbl-shatter" class="font-mono">0.00</span></div>
+              <input data-param="shatter" type="range" min="0" max="1" step="0.01" value="0" class="w-full op-slider" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <video id="webcam-video" autoplay playsinline muted class="hidden"></video>
+    </section>
+  </main>
+
+  <!-- PsychonautWiki 物质 × 主观效应参考集浏览器 -->
+  <div id="reference-modal" role="dialog" aria-modal="true" aria-labelledby="reference-title" class="hidden fixed inset-0 z-40 bg-black/80 p-2 backdrop-blur-sm sm:p-6">
+    <div class="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0b0e16] shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div class="min-w-0">
+          <h2 id="reference-title" class="text-sm font-bold text-emerald-300">PsychonautWiki 物质 × 主观效应参考集</h2>
+          <p id="reference-meta" class="mt-0.5 text-[11px] text-slate-500">正在加载…</p>
+        </div>
+        <button id="btn-close-reference" aria-label="关闭参考集" class="shrink-0 rounded border border-white/10 px-2 py-1 text-xs text-slate-300 hover:bg-white/10">关闭 ✕</button>
+      </div>
+      <div class="flex min-h-0 flex-1 flex-col md:flex-row">
+        <aside class="flex max-h-56 w-full shrink-0 flex-col border-b border-white/10 md:max-h-none md:w-72 md:border-b-0 md:border-r">
+          <div class="border-b border-white/5 p-2">
+            <input id="reference-search" type="search" aria-label="搜索参考物质" placeholder="搜索物质 / 别名 / 组别…" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:border-cyan-500/60 focus:outline-none" />
+          </div>
+          <div id="reference-list" class="flex-1 space-y-1 overflow-y-auto p-2"></div>
+        </aside>
+        <section id="reference-detail" class="min-h-0 flex-1 overflow-y-auto p-4 text-xs leading-relaxed text-slate-300"></section>
+      </div>
+    </div>
+  </div>
+
+  <!-- 视频输入 & T+ 时间映射 -->
+  <div id="video-modal" role="dialog" aria-modal="true" aria-labelledby="video-modal-title" class="hidden fixed inset-0 z-40 bg-black/80 p-2 backdrop-blur-sm sm:p-6">
+    <div class="mx-auto flex h-full max-w-5xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0b0e16] shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div class="min-w-0">
+          <h2 id="video-modal-title" class="text-sm font-bold text-rose-300">视频输入 &amp; T+ 时间映射</h2>
+          <p id="video-file-info" class="mt-0.5 truncate text-[11px] text-slate-500">尚未载入视频</p>
+        </div>
+        <button id="btn-close-video" aria-label="关闭视频设置" class="shrink-0 rounded border border-white/10 px-2 py-1 text-xs text-slate-300 hover:bg-white/10">关闭 ✕</button>
+      </div>
+      <div class="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-2">
+        <div class="flex min-h-[220px] items-center justify-center bg-black p-2 md:min-h-0">
+          <video id="video-source" controls playsinline muted preload="metadata" class="h-full w-full object-contain"></video>
+        </div>
+        <div class="min-h-0 space-y-3 overflow-y-auto p-4 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="mb-1 block text-slate-400" for="video-v0">视频起点 (s)</label>
+              <input id="video-v0" type="number" min="0" step="0.1" value="0" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200" />
+            </div>
+            <div>
+              <label class="mb-1 block text-slate-400" for="video-t0">对应 T+ (min)</label>
+              <input id="video-t0" type="number" min="0" step="1" value="0" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200" />
+            </div>
+            <div>
+              <label class="mb-1 block text-slate-400" for="video-v1">视频终点 (s)</label>
+              <input id="video-v1" type="number" min="0" step="0.1" value="0" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200" />
+            </div>
+            <div>
+              <label class="mb-1 block text-slate-400" for="video-t1">对应 T+ (min)</label>
+              <input id="video-t1" type="number" min="0" step="1" value="600" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200" />
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label class="flex cursor-pointer items-center gap-1.5 text-slate-300">
+              <input id="video-loop" type="checkbox" checked class="rounded" />
+              循环映射片段
+            </label>
+            <label class="flex items-center gap-1.5 text-slate-300">
+              驱动方式
+              <select id="video-mode" class="rounded border border-white/15 bg-black/50 px-2 py-1 text-xs text-slate-200">
+                <option value="timeline">时间轴 → 视频</option>
+                <option value="video">视频 → 时间轴</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button id="btn-video-align" class="rounded border border-cyan-500/40 bg-cyan-600/20 px-2.5 py-1.5 text-cyan-200 hover:bg-cyan-600/40">对齐当前 T+</button>
+            <button id="btn-video-fit" class="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-slate-300 hover:bg-white/10">铺满时间轴</button>
+            <button id="btn-video-play" class="rounded border border-emerald-500/40 bg-emerald-600/20 px-2.5 py-1.5 text-emerald-200 hover:bg-emerald-600/40">▶ 播放视频</button>
+            <button id="btn-video-remove" class="rounded border border-rose-500/40 bg-rose-600/20 px-2.5 py-1.5 text-rose-200 hover:bg-rose-600/40">移除视频</button>
+          </div>
+
+          <div id="video-readout" class="rounded border border-white/10 bg-black/40 p-2 font-mono text-[10px] leading-relaxed text-slate-400">尚未载入视频</div>
+
+          <p class="text-[10px] leading-relaxed text-slate-500">
+            映射公式：<code class="text-slate-300">videoT = v0 + (T − t0) × (v1 − v0) / (t1 − t0)</code>。
+            “时间轴 → 视频”适合拖动 T+ 检查某个时刻的画面；“视频 → 时间轴”会播放视频，并让 T+、PK 曲线跟随视频时间。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导出处理后的图片 / 视频 / 预设 -->
+  <div id="export-modal" role="dialog" aria-modal="true" aria-labelledby="export-modal-title" class="hidden fixed inset-0 z-40 bg-black/80 p-2 backdrop-blur-sm sm:p-6">
+    <div class="mx-auto flex h-full max-w-3xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0b0e16] shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div class="min-w-0">
+          <h2 id="export-modal-title" class="text-sm font-bold text-emerald-300">导出处理后的作品</h2>
+          <p id="export-mapping-info" class="mt-0.5 truncate text-[11px] text-slate-500"></p>
+        </div>
+        <button id="btn-close-export" aria-label="关闭导出" class="shrink-0 rounded border border-white/10 px-2 py-1 text-xs text-slate-300 hover:bg-white/10">关闭 ✕</button>
+      </div>
+
+      <div class="min-h-0 flex-1 space-y-3 overflow-y-auto p-4 text-xs">
+        <section class="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="font-semibold text-cyan-300">当前帧 PNG</h3>
+              <p id="export-frame-info" class="mt-0.5 text-[11px] text-slate-500">WebGL 画布当前帧</p>
+            </div>
+            <button id="btn-export-png" class="shrink-0 rounded border border-cyan-500/40 bg-cyan-600/20 px-3 py-1.5 text-cyan-200 hover:bg-cyan-600/40">下载 PNG</button>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+          <h3 class="font-semibold text-rose-300">录制处理后视频 (WebM)</h3>
+          <div class="mt-2 grid grid-cols-3 gap-2">
+            <div>
+              <label class="mb-1 block text-slate-400" for="export-duration">时长 (s)</label>
+              <input id="export-duration" type="number" min="1" max="120" step="1" value="10" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200" />
+            </div>
+            <div>
+              <label class="mb-1 block text-slate-400" for="export-fps">帧率</label>
+              <select id="export-fps" class="w-full rounded border border-white/15 bg-black/50 px-2 py-1.5 text-slate-200">
+                <option value="24">24 fps</option>
+                <option value="30" selected>30 fps</option>
+                <option value="60">60 fps</option>
+              </select>
+            </div>
+            <label class="flex cursor-pointer items-center gap-1.5 self-end pb-1.5 text-slate-300">
+              <input id="export-autoplay" type="checkbox" checked class="rounded" />
+              自动播放
+            </label>
+          </div>
+          <div class="mt-2 flex items-center gap-3">
+            <button id="btn-export-record" class="rounded border border-rose-500/40 bg-rose-600/20 px-3 py-1.5 text-rose-200 hover:bg-rose-600/40">● 开始录制</button>
+            <span id="export-status" class="font-mono text-[11px] text-slate-500">就绪</span>
+          </div>
+          <div class="mt-2 h-1 overflow-hidden rounded bg-white/10">
+            <div id="export-progress-bar" class="h-full w-0 bg-emerald-500 transition-[width]"></div>
+          </div>
+          <p class="mt-2 text-[10px] leading-relaxed text-slate-500">
+            录制的是当前 WebGL 画布（不含 UI）。自动播放时：视频驱动模式会播放导入视频；时间轴模式会启动“自动演化”。
+            录制期间请保持标签页在前台。
+          </p>
+        </section>
+
+        <section class="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="font-semibold text-amber-300">预设 JSON</h3>
+              <p class="mt-0.5 text-[11px] text-slate-500">包含摄入记录、uniform 与视频映射参数</p>
+            </div>
+            <button id="btn-export-preset" class="shrink-0 rounded border border-amber-500/40 bg-amber-600/20 px-3 py-1.5 text-amber-200 hover:bg-amber-600/40">下载 JSON</button>
+          </div>
+        </section>
+
+        <p class="text-[10px] leading-relaxed text-slate-500">
+          PNG 使用 WebGL <code>readPixels</code> 读取当前屏幕输出；WebM 使用 <code>canvas.captureStream()</code> +
+          <code>MediaRecorder</code> 录制，音轨为空。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全局提示 -->
+  <div id="toast" class="hidden fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border px-3 py-2 text-xs shadow-2xl"></div>
+
+  <noscript>
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black text-slate-200 text-sm">
+      此实验需要启用 JavaScript 与 WebGL2。
+    </div>
+  </noscript>
+
+  <script>
+    (() => {
+      "use strict";
+
+      // ==================== 常量 ====================
+      const APP_VERSION = "1.3.0";
+      const MAX_TIMELINE_MINUTES = 1440;
+      const GL_DPR_CAP = 2;
+      const SUB_COLORS = {
+        lsd_25: "#a855f7",
+        psilocybin: "#22c55e",
+        psilocybin_mushrooms: "#22c55e",
+        mescaline: "#eab308",
+        "2c_b": "#ec4899",
+        "2c_e": "#f97316",
+        dmt: "#f59e0b",
+        "4_aco_dmt": "#fb923c",
+        al_lad: "#14b8a6",
+        lsa: "#84cc16",
+        dom: "#ef4444",
+        ibogaine: "#8b5cf6",
+        ayahuasca: "#10b981",
+        ketamine: "#06b6d4",
+        mxe: "#0ea5e9",
+        pcp: "#3b82f6",
+        dxm: "#6366f1",
+        nitrous_oxide: "#38bdf8",
+        mdma: "#ec4899",
+        mda: "#f43f5e",
+        amphetamine: "#f59e0b",
+        caffeine: "#a16207",
+        nicotine: "#94a3b8",
+        cannabis: "#4ade80",
+        salvinorin_a: "#c084fc",
+        ghb: "#60a5fa",
+        alcohol: "#fbbf24"
+      };
+
+      function colorForSubstance(substanceId) {
+        if (SUB_COLORS[substanceId]) return SUB_COLORS[substanceId];
+        let hash = 0;
+        for (let index = 0; index < substanceId.length; index += 1) {
+          hash = (hash * 31 + substanceId.charCodeAt(index)) % 360;
+        }
+        return `hsl(${hash} 72% 62%)`;
+      }
+      const DEFAULT_INGESTIONS = [
+        { id: "ing_1", substance_id: "lsd_25", roa: "sublingual", dose: 120, time_minutes: 0 },
+        { id: "ing_2", substance_id: "ketamine", roa: "insufflated", dose: 45, time_minutes: 150 }
+      ];
+
+      const $ = (id) => document.getElementById(id);
+
+      // ==================== 全局状态 ====================
+      let substances = {};
+      let archives = [];
+      let ingestions = DEFAULT_INGESTIONS.map((item) => ({ ...item }));
+      let currentTimeMinutes = 165;
+      let timelineDuration = 0;
+      let timelineData = null;
+      let lastSimulationState = null;
+
+      let manualOverride = false;
+      let autoplayTimer = null;
+      let simulationTimer = null;
+      let simulationController = null;
+      let simulationSeq = 0;
+      let toastTimer = null;
+      let referenceCache = null;
+      let referenceSelectedId = null;
+      const referenceDetailCache = new Map();
+
+      let activeUniforms = {
+        warp_amplitude: 0.0,
+        warp_frequency: 2.0,
+        symmetry_order: 1,
+        pattern_density: 0.0,
+        rgb_displacement: 0.0,
+        hue_shift: 0.0,
+        feedback_decay: 0.0,
+        edge_reorg: 0.0,
+        analog_glitch: 0.0,
+        scenery_slice: 0.0,
+        diplopia_offset: 0.0,
+        cubism: 0.0,
+        vortex: 0.0,
+        shatter: 0.0
+      };
+
+      const runtime = {
+        ready: false,
+        contextLost: false,
+        fps: 0,
+        resolution: { w: 0, h: 0 },
+        errors: []
+      };
+
+      // ==================== WebGL2 着色器 ====================
+      const VS_SRC = `#version 300 es
+      layout(location = 0) in vec2 a_pos;
+      out vec2 v_uv;
+      void main() {
+        v_uv = a_pos * 0.5 + 0.5;
+        gl_Position = vec4(a_pos, 0.0, 1.0);
+      }`;
+
+      // Pass 1: 多组现象学算子 + 历史帧反馈合成
+      const FS_MAIN = `#version 300 es
+      precision highp float;
+
+      in vec2 v_uv;
+      out vec4 outColor;
+
+      uniform sampler2D u_source;
+      uniform sampler2D u_prevFrame;
+      uniform vec2  u_resolution;
+      uniform float u_time;
+      uniform float u_warp_amp;
+      uniform float u_warp_freq;
+      uniform int   u_sym_order;
+      uniform float u_pattern_density;
+      uniform float u_rgb_disp;
+      uniform float u_hue_shift;
+      uniform float u_feedback_decay;
+      uniform float u_edge_reorg;
+      uniform float u_scenery_slice;
+      uniform float u_diplopia_offset;
+      uniform float u_cubism;
+      uniform float u_vortex;
+      uniform float u_shatter;
+
+      // 2D 梯度噪声
+      vec2 hash2(vec2 p) {
+        p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+        return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+      }
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(dot(hash2(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0)),
+                       dot(hash2(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0)), u.x),
+                   mix(dot(hash2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0)),
+                       dot(hash2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
+      }
+
+      // Voronoi F1/F2：用于碎片化晶格与裂隙
+      vec2 voronoi2(vec2 p) {
+        vec2 n = floor(p);
+        vec2 f = fract(p);
+        float f1 = 8.0;
+        float f2 = 8.0;
+        for (int j = -1; j <= 1; j++) {
+          for (int i = -1; i <= 1; i++) {
+            vec2 g = vec2(float(i), float(j));
+            vec2 o = hash2(n + g) * 0.5 + 0.5;
+            vec2 r = g + o - f;
+            float d = dot(r, r);
+            if (d < f1) {
+              f2 = f1;
+              f1 = d;
+            } else if (d < f2) {
+              f2 = d;
+            }
+          }
+        }
+        return vec2(sqrt(f1), sqrt(f2));
+      }
+
+      vec3 rgb2hsv(vec3 c) {
+        vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+        vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+        vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+        float d = q.x - min(q.w, q.y);
+        float e = 1.0e-10;
+        return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+      }
+      vec3 hsv2rgb(vec3 c) {
+        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+      }
+
+      void main() {
+        vec2 uv = v_uv;
+        float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+        vec2 texel = 1.0 / max(u_resolution, vec2(1.0));
+
+        // [05] 空间边界解构与块状重组 (Perceptual Reorganization)
+        if (u_edge_reorg > 0.01) {
+          float blocks = mix(140.0, 22.0, u_edge_reorg);
+          vec2 aspectUV = vec2(uv.x * aspect, uv.y);
+          vec2 quantUV = floor(aspectUV * blocks) / blocks;
+          float cellOffset = noise(quantUV * 4.0 + u_time * 0.25);
+          uv += vec2(cellOffset, -cellOffset) * 0.08 * u_edge_reorg;
+        }
+
+        // KOR / 解离特异性的场景切片 (Scenery Slicing)
+        if (u_scenery_slice > 0.01) {
+          float bands = mix(9.0, 30.0, u_scenery_slice);
+          float band = floor(uv.y * bands);
+          float shift = fract(sin(band * 91.73 + floor(u_time * 5.0)) * 43758.5453) - 0.5;
+          uv.x = fract(uv.x + shift * 0.12 * u_scenery_slice);
+        }
+
+        // [01] 极坐标对称折叠与万花筒几何 (Pattern Formation)
+        if (u_sym_order > 1 && u_pattern_density > 0.01) {
+          vec2 centered = (uv - 0.5) * vec2(aspect, 1.0);
+          float r = length(centered);
+          float a = atan(centered.y, centered.x);
+          float slices = float(u_sym_order);
+          float sliceAngle = 6.28318530718 / slices;
+          a = mod(a + u_time * 0.12 * u_pattern_density, sliceAngle);
+          a = abs(a - sliceAngle * 0.5);
+          vec2 symP = vec2(cos(a), sin(a)) * r;
+          symP.x /= aspect;
+          uv = mix(uv, fract(symP + 0.5), clamp(u_pattern_density * 0.85, 0.0, 1.0));
+        }
+
+        // [02] 连续流体域扭曲 (Spatial Warping)
+        if (u_warp_amp > 0.005) {
+          vec2 q = vec2(
+            noise(uv * u_warp_freq + vec2(0.0, u_time * 0.35)),
+            noise(uv * u_warp_freq + vec2(5.2, -u_time * 0.30))
+          );
+          vec2 r = vec2(
+            noise(uv * u_warp_freq + 3.5 * q + vec2(1.7, 9.2) + 0.20 * u_time),
+            noise(uv * u_warp_freq + 3.5 * q + vec2(8.3, 2.8) + 0.15 * u_time)
+          );
+          uv += r * u_warp_amp * 0.14;
+        }
+
+        // [03] RGB 光谱通道分离与色相场漂移 (Chromatic Distortion)
+        vec2 dir = (uv - 0.5) * u_rgb_disp * 0.065;
+        vec3 col = vec3(
+          texture(u_source, clamp(uv + dir, 0.0, 1.0)).r,
+          texture(u_source, clamp(uv, 0.0, 1.0)).g,
+          texture(u_source, clamp(uv - dir, 0.0, 1.0)).b
+        );
+
+        // 复视 / 双影 (Diplopia Offset)
+        if (u_diplopia_offset > 0.01) {
+          vec2 ghostOffset = vec2(u_diplopia_offset * 0.035, u_diplopia_offset * 0.012);
+          vec3 ghostA = texture(u_source, clamp(uv + ghostOffset, 0.0, 1.0)).rgb;
+          vec3 ghostB = texture(u_source, clamp(uv - ghostOffset, 0.0, 1.0)).rgb;
+          col = mix(col, max(col * 0.90, max(ghostA, ghostB) * 0.82), u_diplopia_offset * 0.60);
+        }
+
+        // [06] 空间立体主义：面片网格 + 逐面片视点偏移 + 平面色彩量化 (Cubist Recomposition)
+        if (u_cubism > 0.005) {
+          float cells = mix(4.0, 15.0, u_cubism);
+          vec2 cellUV = vec2(uv.x * aspect, uv.y) * cells;
+          vec2 cell = floor(cellUV);
+          vec2 local = fract(cellUV);
+          vec2 rnd = hash2(cell + 19.19);
+
+          float angle = rnd.x * 1.25 * u_cubism;
+          float ca = cos(angle);
+          float sa = sin(angle);
+          vec2 p = uv - 0.5;
+          p = mat2(ca, -sa, sa, ca) * p;
+          vec2 facetUV = p * (1.0 + rnd.y * 0.35 * u_cubism) + 0.5 + rnd * 0.10 * u_cubism;
+          vec3 facet = texture(u_source, clamp(facetUV, 0.0, 1.0)).rgb;
+
+          float levels = mix(10.0, 4.0, u_cubism);
+          facet = floor(facet * levels + 0.5) / levels;
+
+          float edgeDist = min(min(local.x, 1.0 - local.x), min(local.y, 1.0 - local.y));
+          float facetLine = smoothstep(0.0, 0.055, edgeDist);
+          facet *= mix(0.42, 1.0, facetLine);
+          facet = mix(facet, facet * vec3(1.0 + rnd.x * 0.18, 1.0, 1.0 - rnd.y * 0.18), 0.55 * u_cubism);
+
+          col = mix(col, facet, clamp(u_cubism, 0.0, 1.0));
+        }
+
+        // [07] 漩涡与时空隧道：对数极坐标扭转 + 径向缩放 (Vortex Tunnel)
+        if (u_vortex > 0.005) {
+          vec2 centered = (uv - 0.5) * vec2(aspect, 1.0);
+          float r = length(centered);
+          float a = atan(centered.y, centered.x);
+          a += u_vortex * 2.1 / (r + 0.32);
+          float zoom = 1.0 - 0.42 * u_vortex;
+          vec2 vortexP = vec2(cos(a), sin(a)) * pow(max(r, 0.0001), zoom);
+          vortexP.x /= aspect;
+          vec2 vortexUV = vortexP + 0.5;
+          vec3 vortexCol = texture(u_source, clamp(vortexUV, 0.0, 1.0)).rgb;
+
+          float spiral = 0.5 + 0.5 * sin(a * 3.0 + r * 12.0 - u_time * 0.9);
+          vec3 tint = hsv2rgb(vec3(fract(spiral * 0.22 + u_time * 0.03), 0.55, 0.9));
+          vortexCol = mix(vortexCol, vortexCol * 0.65 + tint * 0.35, 0.25 * u_vortex);
+
+          col = mix(col, vortexCol, clamp(u_vortex, 0.0, 1.0) * 0.92);
+        }
+
+        // [08] 碎片化与晶格断裂：Voronoi 细胞分解 + 逐碎片位移 + 裂隙发光 (Voronoi Shatter)
+        if (u_shatter > 0.005) {
+          float cells = mix(6.0, 20.0, u_shatter);
+          vec2 vp = vec2(uv.x * aspect, uv.y) * cells;
+          vec2 vf = voronoi2(vp);
+          vec2 rnd = hash2(floor(vp) + 3.1);
+          vec2 shardUV = uv + rnd * 0.13 * u_shatter;
+          vec3 shard = texture(u_source, clamp(shardUV, 0.0, 1.0)).rgb;
+
+          shard = floor(shard * 8.0 + 0.5) / 8.0;
+          float crack = smoothstep(0.0, 0.12, vf.y - vf.x);
+          shard *= mix(0.25, 1.0, crack);
+          float glow = 1.0 - smoothstep(0.0, 0.075, vf.y - vf.x);
+          shard += vec3(0.45, 0.65, 1.0) * glow * 0.35 * u_shatter;
+
+          col = mix(col, shard, clamp(u_shatter, 0.0, 1.0));
+        }
+
+        // 叠加内禀分形几何晶格 (V1 图灵条纹模拟)
+        if (u_pattern_density > 0.05) {
+          vec2 p = (uv - 0.5) * vec2(aspect, 1.0) * mix(6.0, 22.0, u_pattern_density);
+          float mandala = sin(length(p) * 8.0 - u_time * 2.0)
+                        * cos(atan(p.y, p.x) * float(max(u_sym_order, 2)));
+          vec3 geoColor = hsv2rgb(vec3(fract(mandala * 0.3 + u_time * 0.1), 0.85, 0.95));
+          col = mix(col, col + geoColor * abs(mandala) * 0.55, u_pattern_density * 0.6);
+        }
+
+        // Sobel 轮廓发光解构（按真实分辨率采样）
+        if (u_edge_reorg > 0.05) {
+          vec3 gx = texture(u_source, uv + vec2(texel.x, 0.0)).rgb - texture(u_source, uv - vec2(texel.x, 0.0)).rgb;
+          vec3 gy = texture(u_source, uv + vec2(0.0, texel.y)).rgb - texture(u_source, uv - vec2(0.0, texel.y)).rgb;
+          float edge = length(gx) + length(gy);
+          col = mix(col, vec3(edge * 2.4, edge * 1.6, edge * 3.2), u_edge_reorg * 0.55);
+        }
+
+        // 色相旋转与局部过饱和
+        if (u_hue_shift > 0.01) {
+          vec3 hsv = rgb2hsv(col);
+          hsv.x = fract(hsv.x + u_hue_shift * 0.5 + sin(u_time * 0.4 + length(uv - 0.5) * 4.0) * u_hue_shift * 0.2);
+          hsv.y = clamp(hsv.y * (1.0 + u_hue_shift * 0.7), 0.0, 1.0);
+          col = hsv2rgb(hsv);
+        }
+
+        // [04] 视觉残留与时间叠影 (Ping-Pong Temporal Persistence)
+        vec2 prevUV = (v_uv - 0.5) * (1.0 - 0.008 * u_feedback_decay) + 0.5;
+        vec3 prevCol = texture(u_prevFrame, clamp(prevUV, 0.0, 1.0)).rgb;
+        vec3 prevHSV = rgb2hsv(prevCol);
+        prevHSV.x = fract(prevHSV.x + 0.012 * u_feedback_decay);
+        prevCol = hsv2rgb(prevHSV);
+
+        vec3 finalCol = mix(col, max(col * 0.75, prevCol), u_feedback_decay);
+        outColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
+      }`;
+
+      // Pass 2: 屏幕输出 + 模拟信号扫描线 / 故障美学
+      const FS_SCREEN = `#version 300 es
+      precision highp float;
+
+      in vec2 v_uv;
+      out vec4 outColor;
+
+      uniform sampler2D u_tex;
+      uniform vec2  u_resolution;
+      uniform float u_time;
+      uniform float u_glitch;
+
+      void main() {
+        vec2 uv = v_uv;
+        float glitch = clamp(u_glitch, 0.0, 1.0);
+
+        if (glitch > 0.01) {
+          float lineJitter = sin(uv.y * 180.0 + u_time * 18.0) * 0.004 * glitch;
+          float band = step(0.985, fract(sin(floor(uv.y * 140.0) + floor(u_time * 7.0)) * 43758.5453));
+          uv.x += lineJitter + band * 0.010 * glitch;
+        }
+
+        vec3 col = texture(u_tex, clamp(uv, 0.0, 1.0)).rgb;
+
+        if (glitch > 0.01) {
+          float split = 0.0015 * glitch;
+          col.r = texture(u_tex, clamp(uv + vec2(split, 0.0), 0.0, 1.0)).r;
+          col.b = texture(u_tex, clamp(uv - vec2(split, 0.0), 0.0, 1.0)).b;
+          float scanline = 0.92 + 0.08 * sin(v_uv.y * u_resolution.y * 3.14159);
+          col *= mix(1.0, scanline, glitch);
+        }
+
+        outColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+      }`;
+
+      // ==================== WebGL 资源句柄 ====================
+      let gl = null;
+      let mainProgram = null;
+      let screenProgram = null;
+      let quadBuffer = null;
+      let quadVao = null;
+      let sourceTex = null;
+      let fboA = null;
+      let fboB = null;
+      let texA = null;
+      let texB = null;
+      let pingPong = 0;
+      let mainUniforms = {};
+      let screenUniforms = {};
+      let startTime = 0;
+      let fpsWindowStart = 0;
+      let frameCount = 0;
+      let currentSource = null;
+      let webcamStream = null;
+      let webcamActive = false;
+
+      const videoState = {
+        active: false,
+        ready: false,
+        name: "",
+        objectUrl: null,
+        duration: 0,
+        width: 0,
+        height: 0,
+        mode: "timeline", // timeline | video
+        loop: true,
+        mapping: { t0: 0, v0: 0, t1: 600, v1: 0 },
+        modalOpen: false,
+        lastTimelineUpdate: 0,
+        lastTarget: null,
+        lastPlayState: false
+      };
+
+      const exportState = {
+        recording: false,
+        recorder: null,
+        stream: null,
+        chunks: [],
+        startedAt: 0,
+        timer: null,
+        interval: null,
+        startedAutoplay: false,
+        startedVideo: false,
+        videoWasPaused: true,
+        mimeType: "",
+        durationSeconds: 0,
+        fps: 30,
+        lastExport: null
+      };
+
+      // ==================== 小工具 ====================
+      function escapeHtml(value) {
+        return String(value == null ? "" : value).replace(/[&<>"']/g, (ch) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[ch]));
+      }
+
+      function formatNumber(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return "0";
+        return Number.isInteger(number) ? String(number) : String(Number(number.toFixed(2)));
+      }
+
+      function fmt2(value) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+      }
+
+      function showToast(message, type = "info", duration = 3200) {
+        const toast = $("toast");
+        if (!toast) return;
+        const palette = type === "error"
+          ? "border-rose-500/50 bg-rose-950/95 text-rose-200"
+          : type === "warn"
+            ? "border-amber-500/50 bg-amber-950/95 text-amber-200"
+            : type === "success"
+              ? "border-emerald-500/50 bg-emerald-950/95 text-emerald-200"
+              : "border-slate-500/40 bg-slate-900/95 text-slate-200";
+        toast.className = "fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border px-3 py-2 text-xs shadow-2xl backdrop-blur " + palette;
+        toast.textContent = message;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.add("hidden"), duration);
+      }
+
+      function reportError(message) {
+        runtime.errors.push(message);
+        if (runtime.errors.length > 20) runtime.errors.shift();
+        console.error("[ShaderLab]", message);
+        showToast(message, "error", 6000);
+      }
+
+      // ==================== 时间轴 ====================
+      function computeTimelineDuration() {
+        const latest = ingestions.reduce((max, item) => Math.max(max, Number(item.time_minutes) || 0), 0);
+        const needed = Math.ceil((latest + 360) / 60) * 60;
+        return Math.max(600, Math.min(MAX_TIMELINE_MINUTES, needed));
+      }
+
+      function renderTimeAxis() {
+        const axis = $("time-axis");
+        if (!axis) return;
+        const marks = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round(timelineDuration * ratio));
+        axis.innerHTML = marks.map((mark) => `<span>T+ ${mark}m</span>`).join("");
+      }
+
+      function updateTimeLabel() {
+        const total = Math.round(currentTimeMinutes);
+        const hours = Math.floor(total / 60);
+        const minutes = total % 60;
+        $("lbl-current-time").textContent =
+          `T+ ${total} min (${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")})`;
+        syncVideoToTimeline(false);
+        updateVideoReadout();
+      }
+
+      function applyTimelineDuration() {
+        const next = computeTimelineDuration();
+        const slider = $("slider-time");
+        if (next !== timelineDuration) {
+          timelineDuration = next;
+          slider.max = String(timelineDuration);
+          renderTimeAxis();
+        }
+        currentTimeMinutes = Math.max(0, Math.min(timelineDuration, currentTimeMinutes));
+        slider.value = String(currentTimeMinutes);
+        updateTimeLabel();
+      }
+
+      // ==================== 数据与渲染回调 ====================
+      async function initApp() {
+        try {
+          const response = await fetch("/api/metadata", { cache: "no-store" });
+          if (!response.ok) throw new Error(await describeHttpError(response));
+          const data = await response.json();
+          substances = data.substances || {};
+          archives = data.archives || [];
+
+          populateSubstanceSelectors();
+          populateArchives();
+          applyTimelineDuration();
+          renderIngestionList();
+          initWebGL();
+          requestSimulation(true);
+        } catch (error) {
+          reportError("初始化失败: " + error.message);
+          $("hud-mode").textContent = "MODE: INIT FAILED";
+        }
+      }
+
+      function populateSubstanceSelectors() {
+        const select = $("sel-substance");
+        select.innerHTML = "";
+        Object.values(substances).forEach((sub) => {
+          const option = document.createElement("option");
+          option.value = sub.id;
+          option.textContent = sub.name;
+          select.appendChild(option);
+        });
+        select.onchange = () => updateROASelector(true);
+        updateROASelector(true);
+      }
+
+      function updateROASelector(resetDose) {
+        const sub = substances[$("sel-substance").value];
+        const select = $("sel-roa");
+        select.innerHTML = "";
+        if (!sub) return;
+        Object.entries(sub.roas || {}).forEach(([key, roa]) => {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = roa.name;
+          select.appendChild(option);
+        });
+        $("lbl-unit").textContent = sub.unit || "";
+        if (resetDose) {
+          const dose = $("inp-dose");
+          dose.value = sub.standard_dose;
+          dose.step = sub.unit === "μg" ? "5" : "1";
+        }
+      }
+
+      function populateArchives() {
+        const select = $("sel-archive");
+        select.innerHTML = "";
+        archives.forEach((item, index) => {
+          const option = document.createElement("option");
+          option.value = String(index);
+          option.textContent = item.phenomenon;
+          select.appendChild(option);
+        });
+        select.onchange = renderArchiveDetail;
+        renderArchiveDetail();
+      }
+
+      function renderArchiveDetail() {
+        const index = Number($("sel-archive").value) || 0;
+        const item = archives[index];
+        const detail = $("archive-detail");
+        if (!item) {
+          detail.textContent = "暂无档案数据";
+          return;
+        }
+        const stack = Array.isArray(item.shader_stack) ? item.shader_stack.map(escapeHtml).join(" → ") : "";
+        detail.innerHTML = `
+          <div><span class="text-slate-400">文献/报告依据 (Evidence):</span> ${escapeHtml(item.evidence)}</div>
+          <div><span class="text-slate-400">神经机制假设 (Mechanism):</span> ${escapeHtml(item.mechanism_notes)}</div>
+          <div><span class="text-slate-400">算子栈 (Shader Stack):</span> <code class="text-purple-300">${stack}</code></div>
+          <div class="flex flex-wrap justify-between gap-2 text-[11px] pt-1 border-t border-white/10 text-slate-400">
+            <span>置信度: <strong class="text-emerald-300">${escapeHtml(item.confidence)}</strong></span>
+            <span class="max-w-[70%]">局限性: ${escapeHtml(item.limitations)}</span>
+          </div>
+        `;
+      }
+
+      function renderIngestionList() {
+        const container = $("ingestion-list");
+        container.innerHTML = "";
+        if (!ingestions.length) {
+          container.innerHTML = '<div class="text-[11px] text-slate-500 px-1 py-2">尚未添加摄入事件；可载入右上角协同示例。</div>';
+          return;
+        }
+        ingestions.forEach((ing) => {
+          const sub = substances[ing.substance_id];
+          const color = colorForSubstance(ing.substance_id);
+          const row = document.createElement("div");
+          row.className = "flex items-center justify-between gap-2 px-2.5 py-1.5 rounded bg-black/40 border border-white/10 text-xs";
+          row.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2.5 h-2.5 shrink-0 rounded-full" style="background:${color}"></span>
+              <span class="font-medium truncate">${escapeHtml(sub ? sub.name.split(" ")[0] : ing.substance_id)}</span>
+              <span class="text-slate-400 shrink-0">${formatNumber(ing.dose)}${escapeHtml(sub ? sub.unit : "")} (${escapeHtml(ing.roa)})</span>
+              <span class="font-mono text-amber-300 shrink-0">@ T+${formatNumber(ing.time_minutes)}m</span>
+            </div>
+            <button data-id="${escapeHtml(ing.id)}" class="text-rose-400 hover:text-rose-300 px-1 shrink-0" title="移除该摄入事件">✕</button>
+          `;
+          row.querySelector("button").addEventListener("click", () => {
+            ingestions = ingestions.filter((item) => item.id !== ing.id);
+            afterIngestionsChanged();
+          });
+          container.appendChild(row);
+        });
+      }
+
+      function afterIngestionsChanged() {
+        applyTimelineDuration();
+        renderIngestionList();
+        requestSimulation(true);
+      }
+
+      // ==================== 仿真请求（防抖 + 竞态保护） ====================
+      async function describeHttpError(response) {
+        let message = `HTTP ${response.status}`;
+        try {
+          const body = await response.json();
+          const detail = body && body.detail;
+          if (typeof detail === "string") {
+            message = detail;
+          } else if (Array.isArray(detail)) {
+            message = detail.map((entry) => {
+              const path = Array.isArray(entry.loc) ? entry.loc.slice(1).join(".") : "";
+              return `${path}: ${entry.msg}`;
+            }).join("；");
+          }
+        } catch (_error) {
+          // 响应不是 JSON 时保留状态码描述
+        }
+        return message;
+      }
+
+      function requestSimulation(immediate = false) {
+        clearTimeout(simulationTimer);
+        simulationSeq += 1; // 立刻让所有在途请求失效
+        const seq = simulationSeq;
+        if (immediate) {
+          performSimulation(seq);
+        } else {
+          simulationTimer = setTimeout(() => performSimulation(seq), 35);
+        }
+      }
+
+      async function performSimulation(seq) {
+        if (seq !== simulationSeq) return;
+        if (simulationController) simulationController.abort();
+        const controller = new AbortController();
+        simulationController = controller;
+
+        try {
+          const response = await fetch("/api/simulate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            signal: controller.signal,
+            body: JSON.stringify({
+              ingestions,
+              current_time_minutes: currentTimeMinutes,
+              timeline_duration_minutes: timelineDuration
+            })
+          });
+          if (!response.ok) throw new Error(await describeHttpError(response));
+          const data = await response.json();
+          if (seq !== simulationSeq) return;
+          applySimulation(data);
+        } catch (error) {
+          if (error.name === "AbortError") return;
+          if (seq !== simulationSeq) return;
+          reportError("模拟请求失败: " + error.message);
+        }
+      }
+
+      function applySimulation(data) {
+        if (!data || !data.current_state || !data.timeline) {
+          throw new Error("服务端返回的数据结构不完整");
+        }
+        lastSimulationState = data.current_state;
+        timelineData = data.timeline;
+
+        const state = data.current_state;
+        const receptors = state.receptor_load || {};
+        $("val-5ht2a").textContent = fmt2(receptors["5HT2A"]);
+        $("val-nmda").textContent = fmt2(receptors["NMDA_antag"]);
+        $("val-sert").textContent = fmt2(receptors["SERT"]);
+        $("val-synergy").textContent = fmt2(state.synergy_index);
+
+        if (!manualOverride) {
+          activeUniforms = { ...state.shader_uniforms };
+          syncSlidersFromUniforms();
+        }
+        updateHUD();
+        drawPKChart();
+      }
+
+      // ==================== 算子滑块 / HUD ====================
+      function updateSliderLabel(param, value) {
+        const label = $("lbl-" + param);
+        if (!label) return;
+        label.textContent = param === "symmetry_order" ? String(Math.round(Number(value))) : Number(value).toFixed(2);
+      }
+
+      function syncSlidersFromUniforms() {
+        document.querySelectorAll(".op-slider").forEach((slider) => {
+          const param = slider.dataset.param;
+          const value = activeUniforms[param];
+          if (value === undefined) return;
+          slider.value = String(value);
+          updateSliderLabel(param, value);
+        });
+      }
+
+      function updateHUD() {
+        $("hud-mode").textContent = manualOverride
+          ? "MODE: MANUAL OPERATOR OVERRIDE"
+          : `MODE: PK-PD DRIVEN (T+${Math.round(currentTimeMinutes)}m)`;
+        $("hud-summary").textContent =
+          `warp:${fmt2(activeUniforms.warp_amplitude)} | sym:${Math.round(Number(activeUniforms.symmetry_order) || 1)} | ` +
+          `rgb:${fmt2(activeUniforms.rgb_displacement)} | trail:${fmt2(activeUniforms.feedback_decay)}`;
+        $("hud-extra").textContent =
+          `cub:${fmt2(activeUniforms.cubism)} | vortex:${fmt2(activeUniforms.vortex)} | shatter:${fmt2(activeUniforms.shatter)}`;
+      }
+
+      function applyCubismPreset() {
+        if (videoState.active && videoState.mode === "video") setVideoMode("timeline");
+        manualOverride = true;
+        $("chk-manual").checked = true;
+        Object.assign(activeUniforms, {
+          cubism: 0.85,
+          vortex: 0.35,
+          shatter: 0.55,
+          edge_reorg: 0.45,
+          pattern_density: 0.55,
+          symmetry_order: 6,
+          warp_amplitude: 0.35,
+          warp_frequency: 2.4,
+          rgb_displacement: 0.45,
+          hue_shift: 0.25,
+          feedback_decay: 0.35,
+          analog_glitch: 0.25,
+          scenery_slice: 0.25,
+          diplopia_offset: 0.2
+        });
+        syncSlidersFromUniforms();
+        updateHUD();
+        showToast("已载入空间立体主义示例 (Cubism · Vortex · Shatter)", "success", 2600);
+      }
+
+      // ==================== 2D 曲线图（DPR 感知） ====================
+      function drawPKChart() {
+        const canvas = $("pk-chart");
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width < 4 || rect.height < 4) return;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = Math.round(rect.width);
+        const height = Math.round(rect.height);
+        const pixelWidth = Math.max(1, Math.round(width * dpr));
+        const pixelHeight = Math.max(1, Math.round(height * dpr));
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+          canvas.width = pixelWidth;
+          canvas.height = pixelHeight;
+        }
+
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+
+        const padTop = 10;
+        const padBottom = 12;
+        const plotHeight = height - padTop - padBottom;
+
+        // 水平网格 + 强度刻度
+        ctx.strokeStyle = "rgba(255,255,255,0.06)";
+        ctx.lineWidth = 1;
+        ctx.font = "9px ui-monospace, monospace";
+        ctx.fillStyle = "rgba(148,163,184,0.55)";
+        [0, 0.25, 0.5, 0.75, 1].forEach((level) => {
+          const y = padTop + (1 - level) * plotHeight;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+          ctx.fillText(level.toFixed(1), 3, Math.max(8, y - 2));
+        });
+
+        if (!timelineData || !Array.isArray(timelineData.timestamps) || !timelineData.timestamps.length) {
+          ctx.fillStyle = "rgba(148,163,184,0.8)";
+          ctx.font = "11px ui-sans-serif, system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("等待 PK-PD 数据 / Waiting for simulation…", width / 2, height / 2);
+          ctx.textAlign = "left";
+          return;
+        }
+
+        const timestamps = timelineData.timestamps;
+        const maxT = Math.max(timelineDuration, Number(timestamps[timestamps.length - 1]) || 0, 1);
+        const xOf = (time) => (Number(time) / maxT) * width;
+        const yOf = (value) => padTop + (1 - Math.min(1, Math.max(0, Number(value) || 0))) * plotHeight;
+
+        // 各物质效应曲线
+        Object.entries(timelineData.curves || {}).forEach(([subId, values]) => {
+          if (!Array.isArray(values) || !values.length) return;
+          const color = colorForSubstance(subId);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          values.forEach((value, index) => {
+            const x = xOf(timestamps[index]);
+            const y = yOf(value);
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+        });
+
+        // 协同曲线（虚线）
+        if (Array.isArray(timelineData.synergy_curve) && timelineData.synergy_curve.length) {
+          ctx.strokeStyle = "#fbbf24";
+          ctx.setLineDash([4, 4]);
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          timelineData.synergy_curve.forEach((value, index) => {
+            const x = xOf(timestamps[index]);
+            const y = yOf(value);
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // 当前时间游标
+        const cursorX = xOf(currentTimeMinutes);
+        ctx.strokeStyle = "rgba(248,250,252,0.9)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cursorX, 0);
+        ctx.lineTo(cursorX, height);
+        ctx.stroke();
+
+        // 游标顶部小三角
+        ctx.fillStyle = "#f8fafc";
+        ctx.beginPath();
+        ctx.moveTo(cursorX - 4, 0);
+        ctx.lineTo(cursorX + 4, 0);
+        ctx.lineTo(cursorX, 6);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // ==================== WebGL2 初始化 ====================
+      function initWebGL() {
+        const canvas = $("gl-canvas");
+        try {
+          gl = canvas.getContext("webgl2", {
+            alpha: false,
+            antialias: false,
+            depth: false,
+            stencil: false,
+            preserveDrawingBuffer: false,
+            powerPreference: "high-performance"
+          });
+          if (!gl) throw new Error("当前浏览器不支持 WebGL2（请使用最新版 Chrome / Edge / Firefox）");
+
+          initGLResources();
+          runtime.ready = true;
+          $("hud-engine").textContent = `WebGL2 · ${canvas.width}×${canvas.height} · warming up…`;
+          startTime = performance.now();
+          fpsWindowStart = startTime;
+          frameCount = 0;
+
+          canvas.addEventListener("webglcontextlost", onContextLost, false);
+          canvas.addEventListener("webglcontextrestored", onContextRestored, false);
+
+          if (typeof ResizeObserver !== "undefined") {
+            const observer = new ResizeObserver(() => resizeGL());
+            observer.observe(canvas);
+          }
+
+          requestAnimationFrame(frameLoop);
+        } catch (error) {
+          handleGLError(error);
+        }
+      }
+
+      function initGLResources() {
+        if (mainProgram) gl.deleteProgram(mainProgram);
+        if (screenProgram) gl.deleteProgram(screenProgram);
+
+        mainProgram = createProgram(VS_SRC, FS_MAIN);
+        screenProgram = createProgram(VS_SRC, FS_SCREEN);
+
+        if (quadBuffer) gl.deleteBuffer(quadBuffer);
+        if (quadVao) gl.deleteVertexArray(quadVao);
+        quadBuffer = gl.createBuffer();
+        quadVao = gl.createVertexArray();
+        gl.bindVertexArray(quadVao);
+        gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+          -1, -1, 1, -1, -1, 1,
+          -1, 1, 1, -1, 1, 1
+        ]), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.bindVertexArray(null);
+
+        if (sourceTex) gl.deleteTexture(sourceTex);
+        sourceTex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, sourceTex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+          new Uint8Array([9, 10, 15, 255]));
+
+        mainUniforms = cacheUniforms(mainProgram, [
+          "u_source", "u_prevFrame", "u_resolution", "u_time", "u_warp_amp", "u_warp_freq",
+          "u_sym_order", "u_pattern_density", "u_rgb_disp", "u_hue_shift",
+          "u_feedback_decay", "u_edge_reorg", "u_scenery_slice", "u_diplopia_offset",
+          "u_cubism", "u_vortex", "u_shatter"
+        ]);
+        screenUniforms = cacheUniforms(screenProgram, ["u_tex", "u_resolution", "u_time", "u_glitch"]);
+
+        resizeGL(true);
+
+        // 恢复输入源：首次启动使用内置测试源；上下文恢复后尽量还原上一次输入
+        // （视频会由渲染循环逐帧重传，因此不需要在这里上传）
+        if (currentSource && currentSource !== $("webcam-video")) {
+          try {
+            uploadSource(currentSource);
+          } catch (error) {
+            console.warn("[ShaderLab] 恢复输入纹理失败:", error);
+          }
+        } else if (!currentSource) {
+          try {
+            uploadSource(generateProceduralTestCanvas());
+          } catch (error) {
+            reportError("内置测试源上传失败: " + error.message);
+          }
+        }
+      }
+
+      function cacheUniforms(program, names) {
+        const map = {};
+        names.forEach((name) => { map[name] = gl.getUniformLocation(program, name); });
+        return map;
+      }
+
+      function compileShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          const log = gl.getShaderInfoLog(shader) || "unknown error";
+          gl.deleteShader(shader);
+          throw new Error((type === gl.VERTEX_SHADER ? "顶点" : "片元") + "着色器编译失败：\n" + log);
+        }
+        return shader;
+      }
+
+      function createProgram(vertexSource, fragmentSource) {
+        const program = gl.createProgram();
+        const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSource);
+        const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          const log = gl.getProgramInfoLog(program) || "unknown error";
+          gl.deleteProgram(program);
+          throw new Error("着色器程序链接失败：\n" + log);
+        }
+        return program;
+      }
+
+      function createFBO(width, height) {
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        const framebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (status !== gl.FRAMEBUFFER_COMPLETE) {
+          throw new Error("Framebuffer 不完整：0x" + status.toString(16));
+        }
+        gl.viewport(0, 0, width, height);
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        return { framebuffer, texture };
+      }
+
+      function resizeGL(force = false) {
+        if (!gl) return;
+        const canvas = $("gl-canvas");
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, GL_DPR_CAP);
+        const width = Math.max(2, Math.round((rect.width || canvas.width || 640) * dpr));
+        const height = Math.max(2, Math.round((rect.height || canvas.height || 480) * dpr));
+        if (!force && canvas.width === width && canvas.height === height) return;
+
+        canvas.width = width;
+        canvas.height = height;
+        runtime.resolution = { w: width, h: height };
+
+        if (fboA) gl.deleteFramebuffer(fboA);
+        if (fboB) gl.deleteFramebuffer(fboB);
+        if (texA) gl.deleteTexture(texA);
+        if (texB) gl.deleteTexture(texB);
+        fboA = null; fboB = null; texA = null; texB = null;
+
+        const a = createFBO(width, height);
+        const b = createFBO(width, height);
+        fboA = a.framebuffer; texA = a.texture;
+        fboB = b.framebuffer; texB = b.texture;
+        pingPong = 0;
+      }
+
+      // ==================== 渲染循环 ====================
+      function frameLoop(now) {
+        if (!gl || runtime.contextLost) return;
+        try {
+          renderFrame(now || performance.now());
+        } catch (error) {
+          handleGLError(error);
+          return;
+        }
+        updateFps(now || performance.now());
+        requestAnimationFrame(frameLoop);
+      }
+
+      function updateFps(now) {
+        frameCount += 1;
+        if (now - fpsWindowStart < 500) return;
+        runtime.fps = Math.round((frameCount * 1000) / Math.max(1, now - fpsWindowStart));
+        frameCount = 0;
+        fpsWindowStart = now;
+        const canvas = $("gl-canvas");
+        $("hud-engine").textContent =
+          `WebGL2 · ${canvas.width}×${canvas.height} · ${runtime.fps} fps`;
+      }
+
+      function renderFrame(now) {
+        const canvas = $("gl-canvas");
+        resizeGL();
+
+        if (webcamActive) {
+          const video = $("webcam-video");
+          if (video.readyState >= 2 && video.videoWidth > 0) {
+            uploadSource(video);
+          }
+        } else if (videoState.active && videoState.ready) {
+          const video = $("video-source");
+          if (video.readyState >= 2 && video.videoWidth > 0) {
+            uploadSource(video);
+          }
+          if (videoState.mode === "video") {
+            updateTimelineFromVideo(now);
+          }
+        }
+
+        const elapsed = (now - startTime) * 0.001;
+        const writeFbo = pingPong === 0 ? fboA : fboB;
+        const writeTex = pingPong === 0 ? texA : texB;
+        const readTex = pingPong === 0 ? texB : texA;
+
+        // ---- Pass 1：算子栈 + 历史帧反馈 ----
+        gl.bindFramebuffer(gl.FRAMEBUFFER, writeFbo);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(mainProgram);
+        gl.bindVertexArray(quadVao);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, sourceTex);
+        gl.uniform1i(mainUniforms.u_source, 0);
+
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, readTex);
+        gl.uniform1i(mainUniforms.u_prevFrame, 1);
+
+        gl.uniform2f(mainUniforms.u_resolution, canvas.width, canvas.height);
+        gl.uniform1f(mainUniforms.u_time, elapsed);
+        gl.uniform1f(mainUniforms.u_warp_amp, Number(activeUniforms.warp_amplitude) || 0);
+        gl.uniform1f(mainUniforms.u_warp_freq, Number(activeUniforms.warp_frequency) || 1);
+        gl.uniform1i(mainUniforms.u_sym_order, Math.max(1, Math.round(Number(activeUniforms.symmetry_order) || 1)));
+        gl.uniform1f(mainUniforms.u_pattern_density, Number(activeUniforms.pattern_density) || 0);
+        gl.uniform1f(mainUniforms.u_rgb_disp, Number(activeUniforms.rgb_displacement) || 0);
+        gl.uniform1f(mainUniforms.u_hue_shift, Number(activeUniforms.hue_shift) || 0);
+        gl.uniform1f(mainUniforms.u_feedback_decay, Number(activeUniforms.feedback_decay) || 0);
+        gl.uniform1f(mainUniforms.u_edge_reorg, Number(activeUniforms.edge_reorg) || 0);
+        gl.uniform1f(mainUniforms.u_scenery_slice, Number(activeUniforms.scenery_slice) || 0);
+        gl.uniform1f(mainUniforms.u_diplopia_offset, Number(activeUniforms.diplopia_offset) || 0);
+        gl.uniform1f(mainUniforms.u_cubism, Number(activeUniforms.cubism) || 0);
+        gl.uniform1f(mainUniforms.u_vortex, Number(activeUniforms.vortex) || 0);
+        gl.uniform1f(mainUniforms.u_shatter, Number(activeUniforms.shatter) || 0);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        // ---- Pass 2：屏幕输出 + 模拟信号故障 ----
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(screenProgram);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, writeTex);
+        gl.uniform1i(screenUniforms.u_tex, 0);
+        gl.uniform2f(screenUniforms.u_resolution, canvas.width, canvas.height);
+        gl.uniform1f(screenUniforms.u_time, elapsed);
+        gl.uniform1f(screenUniforms.u_glitch, Number(activeUniforms.analog_glitch) || 0);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        pingPong = 1 - pingPong;
+      }
+
+      // ==================== 输入源管理 ====================
+      function uploadSource(source) {
+        if (!gl || !sourceTex) return;
+        currentSource = source;
+        gl.bindTexture(gl.TEXTURE_2D, sourceTex);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      }
+
+      function prepareImageSource(image) {
+        const maxSide = 1920;
+        const width = image.naturalWidth || image.width;
+        const height = image.naturalHeight || image.height;
+        const scale = Math.min(1, maxSide / Math.max(width || 1, height || 1));
+        if (scale >= 1) return image;
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+        return canvas;
+      }
+
+      function generateProceduralTestCanvas() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 960;
+        canvas.height = 720;
+        const ctx = canvas.getContext("2d");
+        const gradient = ctx.createRadialGradient(480, 360, 20, 480, 360, 560);
+        gradient.addColorStop(0, "#fbbf24");
+        gradient.addColorStop(0.35, "#ec4899");
+        gradient.addColorStop(0.7, "#6366f1");
+        gradient.addColorStop(1, "#0f172a");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 测试同心几何与网格
+        ctx.strokeStyle = "rgba(255,255,255,0.45)";
+        ctx.lineWidth = 2;
+        for (let radius = 50; radius <= 340; radius += 58) {
+          ctx.beginPath();
+          ctx.arc(480, 360, radius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        for (let index = 0; index < 12; index += 1) {
+          const angle = (index * Math.PI) / 6;
+          ctx.beginPath();
+          ctx.moveTo(480, 360);
+          ctx.lineTo(480 + Math.cos(angle) * 560, 360 + Math.sin(angle) * 560);
+          ctx.stroke();
+        }
+        // 用于观察色散与边缘解构的白色小方格
+        ctx.fillStyle = "rgba(255,255,255,0.9)";
+        for (let row = 0; row < 4; row += 1) {
+          for (let col = 0; col < 5; col += 1) {
+            ctx.fillRect(120 + col * 160, 80 + row * 160, 44, 44);
+          }
+        }
+        return canvas;
+      }
+
+      function stopWebcam() {
+        if (webcamStream) {
+          webcamStream.getTracks().forEach((track) => track.stop());
+          webcamStream = null;
+        }
+        const video = $("webcam-video");
+        if (video) video.srcObject = null;
+        webcamActive = false;
+        if (currentSource === video) currentSource = null;
+        const button = $("btn-webcam");
+        if (button) button.textContent = "开启摄像头";
+      }
+
+      async function toggleWebcam() {
+        if (webcamStream) {
+          stopWebcam();
+          showToast("摄像头已关闭", "info", 1800);
+          return;
+        }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showToast("当前环境不支持摄像头（需要 HTTPS 或 localhost）", "warn", 5000);
+          return;
+        }
+        stopVideo({ restore: false, revoke: true, silent: true });
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false
+          });
+          const video = $("webcam-video");
+          video.srcObject = stream;
+          await video.play().catch(() => {});
+          webcamStream = stream;
+          webcamActive = true;
+          $("btn-webcam").textContent = "关闭摄像头";
+          showToast("摄像头已开启，实时输入将进入着色器", "success", 2600);
+        } catch (error) {
+          showToast("无法访问摄像头: " + error.message, "error", 6000);
+        }
+      }
+
+      // ==================== 视频输入与 T+ 时间映射 ====================
+      function clampNumber(value, minimum, maximum) {
+        return Math.min(maximum, Math.max(minimum, Number(value) || 0));
+      }
+
+      function modulo(value, span) {
+        return ((value % span) + span) % span;
+      }
+
+      function pad2(value) {
+        return String(value).padStart(2, "0");
+      }
+
+      function formatVideoClock(seconds) {
+        const total = Math.max(0, Number(seconds) || 0);
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const secs = Math.floor(total % 60);
+        const tenths = Math.floor((total * 10) % 10);
+        return hours > 0
+          ? `${hours}:${pad2(minutes)}:${pad2(secs)}.${tenths}`
+          : `${pad2(minutes)}:${pad2(secs)}.${tenths}`;
+      }
+
+      function videoMappingSpeed() {
+        const m = videoState.mapping;
+        const spanT = m.t1 - m.t0;
+        return spanT > 1e-6 ? (m.v1 - m.v0) / spanT : 0;
+      }
+
+      function videoTimeForTimeline(minutes) {
+        const m = videoState.mapping;
+        const spanT = m.t1 - m.t0;
+        const spanV = m.v1 - m.v0;
+        if (Math.abs(spanT) < 1e-6 || Math.abs(spanV) < 1e-6) return clampNumber(m.v0, 0, videoState.duration || 0);
+        let target = m.v0 + ((Number(minutes) - m.t0) * spanV) / spanT;
+        if (videoState.loop) {
+          const low = Math.min(m.v0, m.v1);
+          const span = Math.abs(spanV);
+          target = low + modulo(target - low, span);
+        } else {
+          target = clampNumber(target, Math.min(m.v0, m.v1), Math.max(m.v0, m.v1));
+        }
+        return clampNumber(target, 0, videoState.duration || 0);
+      }
+
+      function timelineForVideoTime(seconds) {
+        const m = videoState.mapping;
+        const spanV = m.v1 - m.v0;
+        if (Math.abs(spanV) < 1e-6) return m.t0;
+        let target = m.t0 + ((Number(seconds) - m.v0) * (m.t1 - m.t0)) / spanV;
+        if (videoState.loop) {
+          const low = Math.min(m.t0, m.t1);
+          const span = Math.abs(m.t1 - m.t0);
+          target = low + modulo(target - low, span);
+        } else {
+          target = clampNumber(target, Math.min(m.t0, m.t1), Math.max(m.t0, m.t1));
+        }
+        return clampNumber(target, 0, timelineDuration);
+      }
+
+      function syncVideoToTimeline(force = false) {
+        if (!videoState.active || !videoState.ready || videoState.mode !== "timeline") return;
+        if (videoState.modalOpen && !force) return;
+        const video = $("video-source");
+        if (!video) return;
+        const target = videoTimeForTimeline(currentTimeMinutes);
+        videoState.lastTarget = target;
+        if (force || Math.abs(video.currentTime - target) > 0.06) {
+          try {
+            video.currentTime = target;
+          } catch (_error) {
+            // 视频尚未 seekable 时忽略；下一帧会重试
+          }
+        }
+        if (!video.paused) video.pause();
+        updateVideoReadout();
+      }
+
+      function updateTimelineFromVideo(now = performance.now(), force = false) {
+        if (!videoState.active || !videoState.ready || videoState.mode !== "video") return;
+        const video = $("video-source");
+        if (!video) return;
+        const m = videoState.mapping;
+        if (m.v1 <= m.v0) return;
+
+        if (videoState.loop) {
+          if (video.currentTime >= m.v1 || video.currentTime < m.v0 - 0.1) {
+            try {
+              video.currentTime = m.v0;
+            } catch (_error) { /* ignore */ }
+            if (video.ended) video.play().catch(() => {});
+          }
+        } else if (video.currentTime >= m.v1) {
+          if (!video.paused) video.pause();
+          try { video.currentTime = m.v1; } catch (_error) { /* ignore */ }
+        }
+
+        const target = timelineForVideoTime(video.currentTime);
+        if (!force && Math.abs(target - currentTimeMinutes) < 0.01) return;
+        if (!force && now - videoState.lastTimelineUpdate < 120) return;
+
+        videoState.lastTimelineUpdate = now;
+        currentTimeMinutes = target;
+        $("slider-time").value = String(Math.round(currentTimeMinutes));
+        updateTimeLabel();
+        drawPKChart();
+        requestSimulation();
+      }
+
+      function updateVideoReadout() {
+        const hud = $("hud-video");
+        if (!videoState.active || !videoState.ready) {
+          if (hud) hud.classList.add("hidden");
+          if ($("video-readout")) $("video-readout").textContent = "尚未载入视频";
+          if ($("video-file-info")) $("video-file-info").textContent = "尚未载入视频";
+          if ($("export-mapping-info")) $("export-mapping-info").textContent = "未导入视频";
+          return;
+        }
+        const m = videoState.mapping;
+        const target = videoTimeForTimeline(currentTimeMinutes);
+        const speed = videoMappingSpeed();
+        if (hud) {
+          hud.classList.remove("hidden");
+          hud.textContent = `VIDEO ${videoState.name} · T+${Math.round(currentTimeMinutes)} → ${formatVideoClock(target)}`;
+        }
+        if ($("video-file-info")) {
+          $("video-file-info").textContent =
+            `${videoState.name} · ${videoState.duration.toFixed(1)}s · ${videoState.width}×${videoState.height} · ${videoState.mode === "video" ? "视频驱动" : "时间轴驱动"}`;
+        }
+        if ($("video-readout")) {
+          $("video-readout").innerHTML =
+            `T+ ${currentTimeMinutes.toFixed(1)} min → 视频 <span class="text-rose-300">${formatVideoClock(target)}</span> / ${formatVideoClock(videoState.duration)}<br>` +
+            `映射: ${m.v0.toFixed(1)}s @ T+${m.t0.toFixed(1)} → ${m.v1.toFixed(1)}s @ T+${m.t1.toFixed(1)}<br>` +
+            `速度: ${speed.toFixed(4)} 视频秒 / 1 T+分钟 · ${videoState.loop ? "循环" : "不循环"} · ${videoState.mode === "video" ? "视频 → 时间轴" : "时间轴 → 视频"}`;
+        }
+        if ($("export-mapping-info")) {
+          $("export-mapping-info").textContent =
+            `视频 ${videoState.name} · T+${Math.round(currentTimeMinutes)} → ${formatVideoClock(target)} · ${videoState.mode === "video" ? "视频驱动" : "时间轴驱动"}`;
+        }
+        updateVideoPlayButton();
+      }
+
+      function updateVideoPlayButton() {
+        const button = $("btn-video-play");
+        if (!button) return;
+        const video = $("video-source");
+        if (!videoState.active || !videoState.ready) {
+          button.textContent = "▶ 播放视频";
+          return;
+        }
+        button.textContent = video.paused ? "▶ 播放视频" : "⏸ 暂停视频";
+      }
+
+      function syncVideoInputsFromState() {
+        if (!videoState.active) return;
+        const m = videoState.mapping;
+        $("video-v0").value = String(Number(m.v0.toFixed(2)));
+        $("video-t0").value = String(Number(m.t0.toFixed(2)));
+        $("video-v1").value = String(Number(m.v1.toFixed(2)));
+        $("video-t1").value = String(Number(m.t1.toFixed(2)));
+        $("video-v0").max = String(videoState.duration || 0);
+        $("video-v1").max = String(videoState.duration || 0);
+        $("video-loop").checked = videoState.loop;
+        $("video-mode").value = videoState.mode;
+      }
+
+      function readVideoMappingInputs() {
+        if (!videoState.active || !videoState.ready) return false;
+        const duration = videoState.duration;
+        const v0 = clampNumber(parseFloat($("video-v0").value), 0, duration);
+        const v1 = clampNumber(parseFloat($("video-v1").value), 0, duration);
+        const t0 = clampNumber(parseFloat($("video-t0").value), 0, MAX_TIMELINE_MINUTES);
+        const t1 = clampNumber(parseFloat($("video-t1").value), 0, MAX_TIMELINE_MINUTES);
+        if (t1 <= t0 + 0.01 || v1 <= v0 + 0.01) {
+          showToast("时间映射无效：终点必须大于起点", "warn", 4200);
+          return false;
+        }
+        videoState.mapping = { t0, v0, t1, v1 };
+        videoState.loop = $("video-loop").checked;
+        return true;
+      }
+
+      function onVideoMappingChanged() {
+        if (!readVideoMappingInputs()) return;
+        syncVideoInputsFromState();
+        if (videoState.mode === "timeline") {
+          syncVideoToTimeline(true);
+        } else {
+          videoState.lastTimelineUpdate = 0;
+          updateTimelineFromVideo(performance.now(), true);
+        }
+        updateVideoReadout();
+      }
+
+      function setVideoMode(mode) {
+        if (!videoState.active || !videoState.ready) return;
+        videoState.mode = mode === "video" ? "video" : "timeline";
+        $("video-mode").value = videoState.mode;
+        const video = $("video-source");
+
+        if (videoState.mode === "timeline") {
+          if (autoplayTimer) stopAutoplay();
+          video.pause();
+          syncVideoToTimeline(true);
+          showToast("已切换：时间轴 → 视频", "info", 1800);
+        } else {
+          if (autoplayTimer) stopAutoplay();
+          try {
+            video.currentTime = videoTimeForTimeline(currentTimeMinutes);
+          } catch (_error) { /* ignore */ }
+          video.play().catch((error) => showToast("视频播放失败: " + error.message, "error", 5000));
+          videoState.lastTimelineUpdate = 0;
+          showToast("已切换：视频 → 时间轴", "info", 1800);
+        }
+        updateVideoPlayButton();
+        updateVideoReadout();
+      }
+
+      function openVideoModal() {
+        if (!videoState.active || !videoState.ready) {
+          $("video-upload").click();
+          return;
+        }
+        if (autoplayTimer) stopAutoplay();
+        videoState.modalOpen = true;
+        $("video-modal").classList.remove("hidden");
+        syncVideoInputsFromState();
+        if (videoState.mode === "timeline") syncVideoToTimeline(true);
+        updateVideoReadout();
+        updateVideoPlayButton();
+      }
+
+      function closeVideoModal() {
+        if (!videoState.modalOpen) return;
+        videoState.modalOpen = false;
+        $("video-modal").classList.add("hidden");
+        if (videoState.active && videoState.ready) {
+          if (videoState.mode === "timeline") {
+            $("video-source").pause();
+            syncVideoToTimeline(true);
+          } else {
+            updateTimelineFromVideo(performance.now(), true);
+          }
+        }
+        updateVideoReadout();
+      }
+
+      function waitForVideoMetadata(video) {
+        return new Promise((resolve, reject) => {
+          if (video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0) {
+            resolve();
+            return;
+          }
+          const cleanup = () => {
+            clearTimeout(timer);
+            video.removeEventListener("loadedmetadata", onLoaded);
+            video.removeEventListener("error", onError);
+          };
+          const onLoaded = () => {
+            cleanup();
+            if (!Number.isFinite(video.duration) || video.duration <= 0) {
+              reject(new Error("视频没有可用的时长信息"));
+            } else {
+              resolve();
+            }
+          };
+          const onError = () => {
+            cleanup();
+            const message = video.error && video.error.message ? video.error.message : "浏览器无法解码该视频";
+            reject(new Error(message));
+          };
+          const timer = setTimeout(() => {
+            cleanup();
+            reject(new Error("读取视频元数据超时"));
+          }, 15000);
+          video.addEventListener("loadedmetadata", onLoaded, { once: true });
+          video.addEventListener("error", onError, { once: true });
+        });
+      }
+
+      async function loadVideoFile(file) {
+        if (!file) return;
+        if (!file.type.startsWith("video/") && !/\.(mp4|webm|mov|m4v|ogv|mkv)$/i.test(file.name)) {
+          showToast("请选择视频文件（MP4 / WebM / MOV 等）", "warn", 4000);
+          return;
+        }
+        stopWebcam();
+        stopVideo({ restore: false, revoke: true, silent: true });
+
+        const video = $("video-source");
+        const url = URL.createObjectURL(file);
+        videoState.objectUrl = url;
+        videoState.name = file.name;
+        videoState.active = true;
+        videoState.ready = false;
+        $("btn-video").textContent = "视频加载中…";
+
+        try {
+          video.muted = true;
+          video.loop = false;
+          video.src = url;
+          video.load();
+          await waitForVideoMetadata(video);
+          if (!video.videoWidth || !video.videoHeight) throw new Error("视频没有视频轨道");
+          videoState.duration = video.duration;
+          videoState.width = video.videoWidth;
+          videoState.height = video.videoHeight;
+          videoState.mapping = {
+            t0: 0,
+            v0: 0,
+            t1: Math.min(MAX_TIMELINE_MINUTES, Math.max(60, timelineDuration)),
+            v1: video.duration
+          };
+          videoState.loop = true;
+          videoState.mode = "timeline";
+          video.currentTime = 0;
+          video.pause();
+          videoState.ready = true;
+          currentSource = video;
+          $("btn-video").textContent = "视频映射";
+          syncVideoInputsFromState();
+          openVideoModal();
+          syncVideoToTimeline(true);
+          updateVideoReadout();
+          showToast(`已载入视频：${file.name}`, "success", 2800);
+        } catch (error) {
+          stopVideo({ restore: true, revoke: true, silent: true });
+          reportError("视频载入失败: " + error.message);
+        }
+      }
+
+      function stopVideo(options = {}) {
+        const { restore = true, revoke = true, silent = false } = options;
+        const video = $("video-source");
+        if (exportState.recording) stopRecording();
+        if (video) {
+          video.pause();
+          video.removeAttribute("src");
+          video.load();
+        }
+        if (revoke && videoState.objectUrl) {
+          URL.revokeObjectURL(videoState.objectUrl);
+        }
+        videoState.objectUrl = null;
+        videoState.active = false;
+        videoState.ready = false;
+        videoState.name = "";
+        videoState.duration = 0;
+        videoState.width = 0;
+        videoState.height = 0;
+        videoState.modalOpen = false;
+        videoState.mode = "timeline";
+        videoState.loop = true;
+        videoState.mapping = { t0: 0, v0: 0, t1: Math.max(60, timelineDuration), v1: 0 };
+        $("video-modal").classList.add("hidden");
+        if (currentSource === video) {
+          currentSource = null;
+          if (restore) {
+            try {
+              uploadSource(generateProceduralTestCanvas());
+            } catch (error) {
+              console.warn("[ShaderLab] 恢复测试源失败:", error);
+            }
+          }
+        }
+        $("btn-video").textContent = "导入视频";
+        $("hud-video").classList.add("hidden");
+        updateVideoReadout();
+        if (!silent) showToast("视频已移除", "info", 1800);
+      }
+
+      async function toggleVideoPlayback() {
+        if (!videoState.active || !videoState.ready) return;
+        const video = $("video-source");
+        if (video.paused) {
+          if (videoState.mode === "video" && videoState.loop) {
+            try { video.currentTime = videoState.mapping.v0; } catch (_error) { /* ignore */ }
+          }
+          try {
+            await video.play();
+          } catch (error) {
+            showToast("视频播放失败: " + error.message, "error", 5000);
+          }
+        } else {
+          video.pause();
+        }
+        updateVideoPlayButton();
+      }
+
+      function alignVideoToCurrentTime() {
+        if (!videoState.active || !videoState.ready) return;
+        const video = $("video-source");
+        const old = videoState.mapping;
+        const spanT = old.t1 - old.t0;
+        const spanV = old.v1 - old.v0;
+        const v0 = clampNumber(video.currentTime, 0, videoState.duration);
+        const t0 = clampNumber(currentTimeMinutes, 0, MAX_TIMELINE_MINUTES);
+        const t1 = clampNumber(t0 + Math.max(1, spanT), 0, MAX_TIMELINE_MINUTES);
+        const v1 = clampNumber(v0 + Math.max(0.1, spanV), 0, videoState.duration);
+        if (t1 <= t0 + 0.01 || v1 <= v0 + 0.01) {
+          showToast("无法对齐：视频剩余长度不足", "warn", 4000);
+          return;
+        }
+        videoState.mapping = { t0, v0, t1, v1 };
+        syncVideoInputsFromState();
+        updateVideoReadout();
+        if (videoState.mode === "timeline") syncVideoToTimeline(true);
+        showToast(`已对齐：视频 ${formatVideoClock(v0)} ↔ T+${t0.toFixed(1)} min`, "success", 2600);
+      }
+
+      function fitVideoToTimeline() {
+        if (!videoState.active || !videoState.ready) return;
+        videoState.mapping = { t0: 0, v0: 0, t1: Math.max(60, timelineDuration), v1: videoState.duration };
+        videoState.loop = true;
+        syncVideoInputsFromState();
+        updateVideoReadout();
+        if (videoState.mode === "timeline") syncVideoToTimeline(true);
+        showToast("已铺满时间轴", "success", 2000);
+      }
+
+      // ==================== 导出处理后的图片 / 视频 ====================
+      function currentSourceLabel() {
+        if (videoState.active && videoState.ready) return `视频 · ${videoState.name}`;
+        if (webcamActive) return "摄像头";
+        if (currentSource) return "图片 / 测试源";
+        return "无输入";
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+
+      function captureProcessedCanvas() {
+        if (!gl || !runtime.ready) throw new Error("WebGL 尚未就绪");
+        renderFrame(performance.now());
+        const canvas = $("gl-canvas");
+        const width = canvas.width;
+        const height = canvas.height;
+        if (!width || !height) throw new Error("画布尺寸无效");
+
+        for (let guard = 0; guard < 8 && gl.getError() !== gl.NO_ERROR; guard += 1) {
+          // 清空此前的 GL 错误，最多 8 次，避免上下文丢失时死循环
+        }
+        const pixels = new Uint8Array(width * height * 4);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        const error = gl.getError();
+        if (error !== gl.NO_ERROR) throw new Error("readPixels 失败: 0x" + error.toString(16));
+
+        const output = document.createElement("canvas");
+        output.width = width;
+        output.height = height;
+        const ctx = output.getContext("2d");
+        const image = ctx.createImageData(width, height);
+        const rowBytes = width * 4;
+        for (let y = 0; y < height; y += 1) {
+          image.data.set(pixels.subarray((height - 1 - y) * rowBytes, (height - y) * rowBytes), y * rowBytes);
+        }
+        ctx.putImageData(image, 0, 0);
+        return output;
+      }
+
+      async function exportProcessedPng() {
+        try {
+          const canvas = captureProcessedCanvas();
+          const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+          if (!blob) throw new Error("PNG 编码失败");
+          const filename = `psychopharm_shader_frame_T${Math.round(currentTimeMinutes)}_${Date.now()}.png`;
+          downloadBlob(blob, filename);
+          exportState.lastExport = {
+            type: "image/png",
+            size: blob.size,
+            filename,
+            width: canvas.width,
+            height: canvas.height,
+            at: Date.now()
+          };
+          $("export-status").textContent = `PNG 已导出 · ${canvas.width}×${canvas.height}`;
+          showToast("当前帧 PNG 已导出", "success", 2200);
+        } catch (error) {
+          reportError("PNG 导出失败: " + error.message);
+        }
+      }
+
+      function updateExportFrameInfo() {
+        const canvas = $("gl-canvas");
+        $("export-frame-info").textContent =
+          `${canvas.width}×${canvas.height} · T+${Math.round(currentTimeMinutes)} min · 来源: ${currentSourceLabel()}`;
+        updateVideoReadout();
+      }
+
+      function openExportModal() {
+        $("export-modal").classList.remove("hidden");
+        updateExportFrameInfo();
+        if (!exportState.recording) {
+          $("export-status").textContent = "就绪";
+          $("export-progress-bar").style.width = "0%";
+        }
+      }
+
+      function closeExportModal() {
+        if (exportState.recording || exportState.recorder) {
+          showToast("请先停止录制", "warn", 3000);
+          return;
+        }
+        $("export-modal").classList.add("hidden");
+      }
+
+      function pickRecordingMimeType() {
+        if (typeof MediaRecorder === "undefined") return "";
+        const candidates = [
+          "video/webm;codecs=vp9",
+          "video/webm;codecs=vp8",
+          "video/webm"
+        ];
+        if (typeof MediaRecorder.isTypeSupported === "function") {
+          return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+        }
+        return "video/webm";
+      }
+
+      function updateExportProgress() {
+        if (!exportState.recording) return;
+        const elapsed = (performance.now() - exportState.startedAt) / 1000;
+        const duration = Math.max(0.1, exportState.durationSeconds);
+        const percent = Math.min(100, (elapsed / duration) * 100);
+        $("export-progress-bar").style.width = percent.toFixed(1) + "%";
+        $("export-status").textContent = `录制中 ${elapsed.toFixed(1)}s / ${duration.toFixed(0)}s`;
+      }
+
+      function startRecording() {
+        if (exportState.recording) return;
+        const canvas = $("gl-canvas");
+        if (!canvas.captureStream) throw new Error("当前浏览器不支持 canvas.captureStream()");
+        const mimeType = pickRecordingMimeType();
+        if (!mimeType) throw new Error("当前浏览器不支持 WebM 录制");
+
+        const fps = clampNumber(parseInt($("export-fps").value, 10) || 30, 1, 60);
+        const duration = clampNumber(parseFloat($("export-duration").value) || 10, 1, 120);
+        const stream = canvas.captureStream(fps);
+        const recorder = new MediaRecorder(stream, {
+          mimeType,
+          videoBitsPerSecond: 12_000_000
+        });
+
+        exportState.recording = true;
+        exportState.recorder = recorder;
+        exportState.stream = stream;
+        exportState.chunks = [];
+        exportState.startedAt = performance.now();
+        exportState.durationSeconds = duration;
+        exportState.fps = fps;
+        exportState.mimeType = mimeType;
+        exportState.startedAutoplay = false;
+        exportState.startedVideo = false;
+
+        recorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) exportState.chunks.push(event.data);
+        };
+        recorder.onstop = () => finalizeRecording();
+        recorder.onerror = (event) => {
+          const message = event.error ? event.error.message : "未知错误";
+          reportError("视频录制失败: " + message);
+          try { recorder.stop(); } catch (_error) { /* ignore */ }
+        };
+        try {
+          recorder.start(250);
+        } catch (error) {
+          exportState.recording = false;
+          exportState.recorder = null;
+          exportState.stream = null;
+          stream.getTracks().forEach((track) => track.stop());
+          throw error;
+        }
+
+        const button = $("btn-export-record");
+        button.textContent = "■ 停止录制";
+        button.disabled = false;
+        $("export-status").textContent = "录制中…";
+        $("export-progress-bar").style.width = "0%";
+
+        exportState.timer = setTimeout(() => stopRecording(), duration * 1000);
+        exportState.interval = setInterval(updateExportProgress, 100);
+        updateExportProgress();
+
+        if ($("export-autoplay").checked) {
+          if (videoState.active && videoState.ready && videoState.mode === "video") {
+            const video = $("video-source");
+            if (video.currentTime >= videoState.mapping.v1 - 0.05) {
+              try { video.currentTime = videoState.mapping.v0; } catch (_error) { /* ignore */ }
+            }
+            exportState.videoWasPaused = video.paused;
+            exportState.startedVideo = video.paused;
+            if (video.paused) video.play().catch(() => {});
+          } else if (!autoplayTimer) {
+            exportState.startedAutoplay = true;
+            toggleAutoplay();
+          }
+        }
+        showToast(`开始录制 ${duration}s · ${fps}fps`, "info", 1800);
+      }
+
+      function stopRecording() {
+        if (!exportState.recorder) return;
+        if (exportState.recorder.state === "inactive") {
+          finalizeRecording();
+          return;
+        }
+        clearTimeout(exportState.timer);
+        clearInterval(exportState.interval);
+        exportState.timer = null;
+        exportState.interval = null;
+        $("export-status").textContent = "正在封装 WebM…";
+        $("btn-export-record").disabled = true;
+        try {
+          exportState.recorder.stop();
+        } catch (error) {
+          reportError("停止录制失败: " + error.message);
+          finalizeRecording();
+        }
+      }
+
+      function finalizeRecording() {
+        const recorder = exportState.recorder;
+        const chunks = exportState.chunks.slice();
+        const mimeType = exportState.mimeType || "video/webm";
+        if (exportState.stream) {
+          exportState.stream.getTracks().forEach((track) => track.stop());
+        }
+        clearTimeout(exportState.timer);
+        clearInterval(exportState.interval);
+        exportState.timer = null;
+        exportState.interval = null;
+        exportState.recorder = null;
+        exportState.stream = null;
+        exportState.chunks = [];
+        exportState.recording = false;
+
+        if (exportState.startedAutoplay && autoplayTimer) stopAutoplay();
+        if (exportState.startedVideo) {
+          const video = $("video-source");
+          if (video && !video.paused) video.pause();
+        }
+        exportState.startedAutoplay = false;
+        exportState.startedVideo = false;
+
+        const button = $("btn-export-record");
+        button.textContent = "● 开始录制";
+        button.disabled = false;
+
+        const blob = new Blob(chunks, { type: mimeType });
+        if (blob.size < 200) {
+          $("export-status").textContent = "录制失败：没有捕获到视频帧";
+          showToast("视频录制失败：没有捕获到帧", "error", 5000);
+          $("export-progress-bar").style.width = "0%";
+          return;
+        }
+        const filename = `psychopharm_shader_T${Math.round(currentTimeMinutes)}_${Date.now()}.webm`;
+        downloadBlob(blob, filename);
+        exportState.lastExport = {
+          type: mimeType,
+          size: blob.size,
+          filename,
+          width: $("gl-canvas").width,
+          height: $("gl-canvas").height,
+          fps: exportState.fps,
+          at: Date.now()
+        };
+        $("export-status").textContent = `WebM 已导出 · ${(blob.size / 1024 / 1024).toFixed(1)} MB`;
+        $("export-progress-bar").style.width = "100%";
+        showToast("处理后视频已导出", "success", 2600);
+      }
+
+      function exportPresetJson() {
+        const payload = {
+          app: "psychopharm-shader-lab",
+          version: APP_VERSION,
+          timestamp_minutes: currentTimeMinutes,
+          timeline_duration_minutes: timelineDuration,
+          ingestions,
+          shader_uniforms: { ...activeUniforms },
+          receptor_snapshot: lastSimulationState ? lastSimulationState.receptor_load : null,
+          video: videoState.active ? {
+            name: videoState.name,
+            duration_seconds: videoState.duration,
+            width: videoState.width,
+            height: videoState.height,
+            mode: videoState.mode,
+            loop: videoState.loop,
+            mapping: { ...videoState.mapping }
+          } : null
+        };
+        const filename = `psychopharm_shader_preset_T${Math.round(currentTimeMinutes)}_${Date.now()}.json`;
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        downloadBlob(blob, filename);
+        exportState.lastExport = { type: "application/json", size: blob.size, filename, at: Date.now() };
+        $("export-status").textContent = "预设 JSON 已导出";
+        showToast("预设 JSON 已导出", "success", 2200);
+      }
+
+      // ==================== WebGL 错误处理 / 上下文恢复 ====================
+      function handleGLError(error) {
+        const message = error && error.message ? error.message : String(error);
+        runtime.errors.push(message);
+        if (runtime.errors.length > 20) runtime.errors.shift();
+        runtime.ready = false;
+        console.error("[ShaderLab]", error);
+
+        const overlay = $("gl-error");
+        overlay.textContent = "WebGL 渲染失败：" + message;
+        overlay.classList.remove("hidden");
+        $("hud-mode").textContent = "MODE: WEBGL ERROR";
+        showToast("WebGL 错误：" + message.split("\n")[0], "error", 8000);
+      }
+
+      function onContextLost(event) {
+        event.preventDefault();
+        runtime.contextLost = true;
+        runtime.ready = false;
+        showToast("WebGL 上下文丢失，等待浏览器恢复…", "warn", 5000);
+      }
+
+      function onContextRestored() {
+        runtime.contextLost = false;
+        try {
+          initGLResources();
+          runtime.ready = true;
+          $("hud-engine").textContent = `WebGL2 · ${$("gl-canvas").width}×${$("gl-canvas").height} · warming up…`;
+          startTime = performance.now();
+          fpsWindowStart = startTime;
+          frameCount = 0;
+          requestAnimationFrame(frameLoop);
+          $("gl-error").classList.add("hidden");
+          showToast("WebGL 上下文已恢复", "success", 2600);
+        } catch (error) {
+          handleGLError(error);
+        }
+      }
+
+      // ==================== PsychonautWiki 参考集浏览器 ====================
+      const REFERENCE_CATEGORY_LABELS = {
+        visual: "视觉",
+        cognitive: "认知 / 心理",
+        physical: "身体",
+        auditory: "听觉",
+        multisensory: "多感官",
+        transpersonal: "超个人",
+        disconnective: "解离 / 连接中断",
+        tactile: "触觉",
+        smell_taste: "嗅觉与味觉",
+        aftereffects: "后效应",
+        other: "其他"
+      };
+      const REFERENCE_CATEGORY_ORDER = [
+        "visual", "cognitive", "physical", "auditory", "multisensory",
+        "transpersonal", "disconnective", "tactile", "smell_taste", "aftereffects", "other"
+      ];
+
+      async function openReferenceModal() {
+        const modal = $("reference-modal");
+        modal.classList.remove("hidden");
+        $("reference-meta").textContent = "正在加载参考集…";
+        try {
+          if (!referenceCache) {
+            const response = await fetch("/api/references", { cache: "no-store" });
+            if (!response.ok) throw new Error(await describeHttpError(response));
+            const payload = await response.json();
+            if (!payload.available || !Array.isArray(payload.substances) || !payload.substances.length) {
+              throw new Error("参考集尚未生成，请先运行 tools/build_effect_reference.py");
+            }
+            referenceCache = payload;
+            $("reference-meta").textContent =
+              `${payload.substances.length} 种物质 · ${payload.meta.effect_count} 条效应记录 · ${payload.meta.license}`;
+          }
+          if (!referenceSelectedId) referenceSelectedId = "lsd";
+          renderReferenceList();
+          if (referenceSelectedId) await selectReference(referenceSelectedId);
+          $("reference-search").focus();
+        } catch (error) {
+          $("reference-meta").textContent = "参考集加载失败";
+          $("reference-detail").innerHTML = `<div class="text-rose-300">${escapeHtml(error.message)}</div>`;
+          showToast("参考集加载失败: " + error.message, "error", 6000);
+        }
+      }
+
+      function closeReferenceModal() {
+        $("reference-modal").classList.add("hidden");
+      }
+
+      function renderReferenceList() {
+        if (!referenceCache) return;
+        const query = ($("reference-search").value || "").trim().toLowerCase();
+        const list = $("reference-list");
+        const items = (referenceCache.substances || []).filter((item) => {
+          if (!query) return true;
+          const haystack = [item.name, item.group, item.family, ...(item.aliases || [])].join(" ").toLowerCase();
+          return haystack.includes(query);
+        });
+        list.innerHTML = "";
+        if (!items.length) {
+          list.innerHTML = '<div class="p-2 text-[11px] text-slate-500">没有匹配的物质</div>';
+          return;
+        }
+        items.forEach((item) => {
+          const button = document.createElement("button");
+          const active = item.id === referenceSelectedId;
+          button.className = "w-full rounded border px-2 py-1.5 text-left transition " + (
+            active
+              ? "border-emerald-500/50 bg-emerald-600/15"
+              : "border-white/5 bg-white/[0.02] hover:bg-white/[0.06]"
+          );
+          button.innerHTML = `
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate text-slate-200">${escapeHtml(item.name)}</span>
+              <span class="font-mono text-[10px] text-slate-500">${escapeHtml(item.effect_count)}</span>
+            </div>
+            <div class="truncate text-[10px] text-slate-500">${escapeHtml(item.group)} · ${escapeHtml(item.family)}</div>
+          `;
+          button.addEventListener("click", () => selectReference(item.id));
+          list.appendChild(button);
+        });
+      }
+
+      async function selectReference(substanceId) {
+        referenceSelectedId = substanceId;
+        renderReferenceList();
+        const detail = $("reference-detail");
+        detail.innerHTML = '<div class="text-slate-500">正在加载档案…</div>';
+        try {
+          let item = referenceDetailCache.get(substanceId);
+          if (!item) {
+            const response = await fetch(`/api/references/${encodeURIComponent(substanceId)}`, { cache: "no-store" });
+            if (!response.ok) throw new Error(await describeHttpError(response));
+            item = await response.json();
+            referenceDetailCache.set(substanceId, item);
+          }
+          renderReferenceDetail(item);
+        } catch (error) {
+          detail.innerHTML = `<div class="text-rose-300">档案加载失败：${escapeHtml(error.message)}</div>`;
+        }
+      }
+
+      function renderReferenceDetail(item) {
+        const phenomenology = item.phenomenology || {};
+        const strength = phenomenology.strength || {};
+        const counts = item.effect_counts || {};
+        const primaryTags = new Set(phenomenology.primary_tags || []);
+        const tagList = [...(phenomenology.tags || [])].sort(
+          (a, b) => (Number(strength[b]) || 0) - (Number(strength[a]) || 0)
+        );
+        const tags = tagList.map((tag) => {
+          const primary = primaryTags.has(tag);
+          return `
+          <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${
+            primary
+              ? "border-emerald-400/60 bg-emerald-500/20 text-emerald-100"
+              : "border-emerald-500/20 bg-emerald-500/5 text-emerald-300/70"
+          }">
+            ${primary ? "★ " : ""}${escapeHtml(tag)} <span class="font-mono ${primary ? "text-emerald-300" : "text-emerald-500/70"}">${(Number(strength[tag]) || 0).toFixed(2)}</span>
+          </span>`;
+        }).join("");
+
+        const groups = new Map();
+        (item.effects || []).forEach((effect) => {
+          if (!groups.has(effect.category)) groups.set(effect.category, new Map());
+          const subMap = groups.get(effect.category);
+          const sub = effect.subcategory || "general";
+          if (!subMap.has(sub)) subMap.set(sub, []);
+          subMap.get(sub).push(effect);
+        });
+
+        let groupsHtml = "";
+        REFERENCE_CATEGORY_ORDER.forEach((category) => {
+          const subMap = groups.get(category);
+          if (!subMap) return;
+          let count = 0;
+          subMap.forEach((items) => { count += items.length; });
+          groupsHtml += `<div class="mt-4">
+            <div class="flex items-center gap-2 border-b border-white/10 pb-1">
+              <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-300">${REFERENCE_CATEGORY_LABELS[category] || category}</h4>
+              <span class="font-mono text-[10px] text-slate-600">${count}</span>
+            </div>`;
+          subMap.forEach((items, subcategory) => {
+            groupsHtml += `<div class="mt-2">
+              <div class="text-[10px] uppercase tracking-wider text-slate-500">${escapeHtml(subcategory)}</div>
+              <div class="mt-1 flex flex-wrap gap-1.5">`;
+            items.forEach((effect) => {
+              const title = effect.note ? ` title="${escapeHtml(effect.note)}"` : "";
+              const dashed = effect.in_sei ? "" : " border-dashed opacity-80";
+              groupsHtml += `<span class="inline-flex rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[11px] text-slate-300${dashed}"${title}>${escapeHtml(effect.name)}</span>`;
+            });
+            groupsHtml += "</div></div>";
+          });
+          groupsHtml += "</div>";
+        });
+
+        const aliases = (item.aliases || []).length
+          ? `<div class="mt-1 text-[11px] text-slate-500">别名：${item.aliases.map(escapeHtml).join("、")}</div>`
+          : "";
+        const source = item.source || {};
+        $("reference-detail").innerHTML = `
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 class="text-base font-bold text-slate-100">${escapeHtml(item.name)}</h3>
+            <a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener" class="text-[11px] text-cyan-400 hover:underline">PsychonautWiki · rev ${escapeHtml(source.revid || "?")} ↗</a>
+          </div>
+          <div class="mt-1 text-[11px] text-slate-500">
+            ${escapeHtml(item.group)} · ${escapeHtml(item.family)} · ${escapeHtml(item.effect_count)}
+            条效应（视觉 ${escapeHtml(counts.visual || 0)}）
+          </div>
+          ${aliases}
+          <p class="mt-3 text-slate-300">${escapeHtml(item.summary)}</p>
+          <div class="mt-3 flex flex-wrap gap-1.5">${tags}</div>
+          <div class="mt-1 text-[10px] text-slate-600">标签强度为启发式映射；悬停效应名可查看 PW 简短描述，虚线表示未收录于 SEI 分类树。</div>
+          ${groupsHtml}
+          <div class="mt-4 border-t border-white/10 pt-2 text-[10px] text-slate-500">
+            数据来自 <a class="text-cyan-400 hover:underline" href="https://psychonautwiki.org/wiki/Subjective_effect_index" target="_blank" rel="noopener">PsychonautWiki</a>
+            （CC BY-SA 4.0）。主观报告不等同于临床证据，不构成医疗建议。
+          </div>
+        `;
+      }
+
+      // ==================== 事件绑定 ====================
+      function bindEvents() {
+        $("btn-add-ingestion").addEventListener("click", () => {
+          const substanceId = $("sel-substance").value;
+          const roa = $("sel-roa").value;
+          const dose = Number($("inp-dose").value);
+          const time = Number($("inp-time").value);
+
+          if (!substances[substanceId] || !roa) {
+            showToast("请选择物质与给药途径", "warn");
+            return;
+          }
+          if (!Number.isFinite(dose) || dose <= 0) {
+            showToast("剂量必须为正数", "warn");
+            return;
+          }
+          if (dose > 10000) {
+            showToast("剂量不能超过 10000", "warn");
+            return;
+          }
+          if (!Number.isFinite(time) || time < 0) {
+            showToast("摄入时刻不能为负数", "warn");
+            return;
+          }
+          if (time > 1440) {
+            showToast("摄入时刻不能超过 1440 分钟（24 小时）", "warn");
+            return;
+          }
+          if (ingestions.length >= 64) {
+            showToast("最多支持 64 条摄入记录", "warn");
+            return;
+          }
+
+          ingestions.push({
+            id: "ing_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+            substance_id: substanceId,
+            roa,
+            dose,
+            time_minutes: time
+          });
+          afterIngestionsChanged();
+          showToast(`已添加 ${substances[substanceId].name} @ T+${time}m`, "success", 1800);
+        });
+
+        $("btn-clear-ingestions").addEventListener("click", () => {
+          if (!ingestions.length) return;
+          ingestions = [];
+          afterIngestionsChanged();
+          showToast("已清空全部摄入记录", "info", 1800);
+        });
+
+        $("btn-preset-candyflip").addEventListener("click", () => {
+          if (videoState.active && videoState.mode === "video") setVideoMode("timeline");
+          stopAutoplay();
+          ingestions = [
+            { id: "ing_a", substance_id: "lsd_25", roa: "sublingual", dose: 150, time_minutes: 0 },
+            { id: "ing_b", substance_id: "mdma", roa: "oral", dose: 110, time_minutes: 120 },
+            { id: "ing_c", substance_id: "ketamine", roa: "insufflated", dose: 50, time_minutes: 210 }
+          ];
+          currentTimeMinutes = 235;
+          applyTimelineDuration();
+          renderIngestionList();
+          requestSimulation(true);
+          showToast("已载入 LSD + MDMA + Ketamine 协同示例", "success", 2400);
+        });
+
+        $("btn-preset-cubism").addEventListener("click", applyCubismPreset);
+        $("btn-cubism-demo").addEventListener("click", applyCubismPreset);
+
+        $("slider-time").addEventListener("input", (event) => {
+          stopAutoplay();
+          if (videoState.active && videoState.mode === "video") setVideoMode("timeline");
+          currentTimeMinutes = Number(event.target.value) || 0;
+          updateTimeLabel();
+          drawPKChart();
+          requestSimulation();
+        });
+
+        $("btn-play-time").addEventListener("click", toggleAutoplay);
+
+        $("chk-manual").addEventListener("change", (event) => {
+          manualOverride = !!event.target.checked;
+          if (manualOverride) {
+            updateHUD();
+          } else {
+            requestSimulation(true);
+          }
+        });
+
+        document.querySelectorAll(".op-slider").forEach((slider) => {
+          slider.addEventListener("input", (event) => {
+            manualOverride = true;
+            $("chk-manual").checked = true;
+            const param = event.target.dataset.param;
+            const value = param === "symmetry_order"
+              ? parseInt(event.target.value, 10)
+              : parseFloat(event.target.value);
+            activeUniforms[param] = value;
+            updateSliderLabel(param, value);
+            updateHUD();
+          });
+        });
+
+        $("file-upload").addEventListener("change", (event) => {
+          const file = event.target.files && event.target.files[0];
+          event.target.value = "";
+          if (!file) return;
+          stopWebcam();
+          stopVideo({ restore: false, revoke: true, silent: true });
+          const url = URL.createObjectURL(file);
+          const image = new Image();
+          image.onload = () => {
+            try {
+              uploadSource(prepareImageSource(image));
+              showToast("已载入图片输入源", "success", 2000);
+            } catch (error) {
+              reportError("上传纹理失败: " + error.message);
+            } finally {
+              URL.revokeObjectURL(url);
+            }
+          };
+          image.onerror = () => {
+            URL.revokeObjectURL(url);
+            reportError("图片加载失败，请换一张图片");
+          };
+          image.src = url;
+        });
+
+        $("btn-source-synth").addEventListener("click", () => {
+          stopWebcam();
+          stopVideo({ restore: false, revoke: true, silent: true });
+          try {
+            uploadSource(generateProceduralTestCanvas());
+            showToast("已切换到内置测试源", "info", 1800);
+          } catch (error) {
+            reportError("载入测试源失败: " + error.message);
+          }
+        });
+
+        $("btn-webcam").addEventListener("click", toggleWebcam);
+
+        $("btn-reference").addEventListener("click", openReferenceModal);
+        $("btn-close-reference").addEventListener("click", closeReferenceModal);
+        $("reference-modal").addEventListener("click", (event) => {
+          if (event.target === $("reference-modal")) closeReferenceModal();
+        });
+        $("reference-search").addEventListener("input", renderReferenceList);
+
+        // ---- 视频输入 / 时间映射 ----
+        $("btn-video").addEventListener("click", () => {
+          if (videoState.active) openVideoModal();
+          else $("video-upload").click();
+        });
+        $("video-upload").addEventListener("change", async (event) => {
+          const file = event.target.files && event.target.files[0];
+          event.target.value = "";
+          await loadVideoFile(file);
+        });
+        $("btn-close-video").addEventListener("click", closeVideoModal);
+        $("video-modal").addEventListener("click", (event) => {
+          if (event.target === $("video-modal")) closeVideoModal();
+        });
+        $("video-mode").addEventListener("change", (event) => setVideoMode(event.target.value));
+        ["video-v0", "video-t0", "video-v1", "video-t1"].forEach((id) => {
+          $(id).addEventListener("change", onVideoMappingChanged);
+        });
+        $("video-loop").addEventListener("change", () => {
+          videoState.loop = $("video-loop").checked;
+          if (videoState.mode === "timeline") syncVideoToTimeline(true);
+          else {
+            videoState.lastTimelineUpdate = 0;
+            updateTimelineFromVideo(performance.now(), true);
+          }
+          updateVideoReadout();
+        });
+        $("btn-video-align").addEventListener("click", alignVideoToCurrentTime);
+        $("btn-video-fit").addEventListener("click", fitVideoToTimeline);
+        $("btn-video-play").addEventListener("click", toggleVideoPlayback);
+        $("btn-video-remove").addEventListener("click", () => stopVideo());
+        $("video-source").addEventListener("play", updateVideoPlayButton);
+        $("video-source").addEventListener("pause", updateVideoPlayButton);
+        $("video-source").addEventListener("seeked", () => updateVideoReadout());
+        $("video-source").addEventListener("ended", () => {
+          if (!videoState.active) return;
+          if (videoState.loop) {
+            try { $("video-source").currentTime = videoState.mapping.v0; } catch (_error) { /* ignore */ }
+            $("video-source").play().catch(() => {});
+          } else {
+            $("video-source").pause();
+            updateTimelineFromVideo(performance.now(), true);
+          }
+          updateVideoPlayButton();
+        });
+
+        // ---- 导出图片 / 视频 / 预设 ----
+        $("btn-export").addEventListener("click", openExportModal);
+        $("btn-close-export").addEventListener("click", closeExportModal);
+        $("export-modal").addEventListener("click", (event) => {
+          if (event.target === $("export-modal")) closeExportModal();
+        });
+        $("btn-export-png").addEventListener("click", exportProcessedPng);
+        $("btn-export-preset").addEventListener("click", exportPresetJson);
+        $("btn-export-record").addEventListener("click", () => {
+          if (exportState.recording || exportState.recorder) {
+            stopRecording();
+            return;
+          }
+          try {
+            startRecording();
+          } catch (error) {
+            reportError("无法开始录制: " + error.message);
+          }
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Escape") return;
+          if (!$("export-modal").classList.contains("hidden")) {
+            closeExportModal();
+            return;
+          }
+          if (!$("video-modal").classList.contains("hidden")) {
+            closeVideoModal();
+            return;
+          }
+          if (!$("reference-modal").classList.contains("hidden")) {
+            closeReferenceModal();
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          drawPKChart();
+          resizeGL();
+        });
+
+        if (typeof ResizeObserver !== "undefined") {
+          const chartObserver = new ResizeObserver(() => drawPKChart());
+          chartObserver.observe($("pk-chart"));
+        }
+
+        window.addEventListener("beforeunload", () => {
+          stopWebcam();
+          try {
+            if (exportState.recorder && exportState.recorder.state !== "inactive") {
+              exportState.recorder.stop();
+            }
+          } catch (_error) {
+            // 页面卸载阶段忽略
+          }
+          if (videoState.objectUrl) URL.revokeObjectURL(videoState.objectUrl);
+        });
+      }
+
+      function toggleAutoplay() {
+        if (autoplayTimer) {
+          stopAutoplay();
+          return;
+        }
+        if (videoState.active && videoState.mode === "video") {
+          setVideoMode("timeline");
+        }
+        const button = $("btn-play-time");
+        button.textContent = "⏸ 暂停演化";
+        autoplayTimer = setInterval(() => {
+          let next = currentTimeMinutes + 4;
+          if (next > timelineDuration) next = 0;
+          currentTimeMinutes = next;
+          $("slider-time").value = String(next);
+          updateTimeLabel();
+          drawPKChart();
+          requestSimulation();
+        }, 180);
+      }
+
+      function stopAutoplay() {
+        if (!autoplayTimer) return;
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+        $("btn-play-time").textContent = "▶ 自动演化";
+      }
+
+      // ==================== 调试接口（控制台 / 自动化测试可用） ====================
+      window.shaderLab = {
+        version: APP_VERSION,
+        getStatus() {
+          return {
+            ready: runtime.ready,
+            contextLost: runtime.contextLost,
+            fps: runtime.fps,
+            resolution: { ...runtime.resolution },
+            uniforms: { ...activeUniforms },
+            currentTimeMinutes,
+            timelineDuration,
+            webcamActive,
+            source: videoState.active && videoState.ready
+              ? "video"
+              : currentSource === $("webcam-video") ? "webcam" : currentSource ? "texture" : "none",
+            video: {
+              active: videoState.active,
+              ready: videoState.ready,
+              name: videoState.name,
+              duration: videoState.duration,
+              width: videoState.width,
+              height: videoState.height,
+              mode: videoState.mode,
+              loop: videoState.loop,
+              mapping: { ...videoState.mapping },
+              target: videoState.active && videoState.ready ? videoTimeForTimeline(currentTimeMinutes) : null,
+              currentTime: videoState.active ? $("video-source").currentTime : null
+            },
+            export: {
+              recording: exportState.recording,
+              lastExport: exportState.lastExport
+            },
+            ingestions: ingestions.map((item) => ({ ...item })),
+            errors: runtime.errors.slice()
+          };
+        },
+        setTime(minutes) {
+          currentTimeMinutes = Math.max(0, Math.min(timelineDuration, Number(minutes) || 0));
+          $("slider-time").value = String(currentTimeMinutes);
+          updateTimeLabel();
+          drawPKChart();
+          requestSimulation(true);
+        },
+        setUniform(name, value) {
+          if (!(name in activeUniforms)) return false;
+          activeUniforms[name] = Number(value);
+          manualOverride = true;
+          $("chk-manual").checked = true;
+          syncSlidersFromUniforms();
+          updateHUD();
+          return true;
+        },
+        async captureFrameDataURL() {
+          return captureProcessedCanvas().toDataURL("image/png");
+        },
+        exportPresetJson,
+        useTestPattern() {
+          stopWebcam();
+          stopVideo({ restore: false, revoke: true, silent: true });
+          uploadSource(generateProceduralTestCanvas());
+        }
+      };
+
+      // ==================== 启动 ====================
+      bindEvents();
+      updateHUD();
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initApp);
+      } else {
+        initApp();
+      }
+    })();
+  </script>
+</body>
+</html>

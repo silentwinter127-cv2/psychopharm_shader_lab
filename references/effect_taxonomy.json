@@ -1,0 +1,3361 @@
+{
+  "source": "https://psychonautwiki.org/wiki/Subjective_effect_index",
+  "list_source": "https://psychonautwiki.org/wiki/List/effects",
+  "effect_count": 242,
+  "categories": [
+    {
+      "slug": "visual",
+      "label": "Visual effects",
+      "subcategories": [
+        {
+          "slug": "amplifications",
+          "label": "Amplifications",
+          "effects": [
+            {
+              "name": "Color enhancement",
+              "target": "Color enhancement",
+              "anchor": null,
+              "label": "Color enhancement"
+            },
+            {
+              "name": "Magnification",
+              "target": "Magnification",
+              "anchor": null,
+              "label": "Magnification"
+            },
+            {
+              "name": "Pattern recognition enhancement",
+              "target": "Pattern recognition enhancement",
+              "anchor": null,
+              "label": "Pattern recognition enhancement"
+            },
+            {
+              "name": "Visual acuity enhancement",
+              "target": "Visual acuity enhancement",
+              "anchor": null,
+              "label": "Visual acuity enhancement"
+            },
+            {
+              "name": "Visual processing acceleration",
+              "target": "Visual processing acceleration",
+              "anchor": null,
+              "label": "Visual processing acceleration"
+            }
+          ]
+        },
+        {
+          "slug": "suppressions",
+          "label": "Suppressions",
+          "effects": [
+            {
+              "name": "Color depression",
+              "target": "Color depression",
+              "anchor": null,
+              "label": "Color depression"
+            },
+            {
+              "name": "Double vision",
+              "target": "Double vision",
+              "anchor": null,
+              "label": "Double vision"
+            },
+            {
+              "name": "Pattern recognition suppression",
+              "target": "Pattern recognition suppression",
+              "anchor": null,
+              "label": "Pattern recognition suppression"
+            },
+            {
+              "name": "Peripheral information misinterpretation",
+              "target": "Peripheral information misinterpretation",
+              "anchor": null,
+              "label": "Peripheral information misinterpretation"
+            },
+            {
+              "name": "Visual acuity suppression",
+              "target": "Visual acuity suppression",
+              "anchor": null,
+              "label": "Visual acuity suppression"
+            },
+            {
+              "name": "Visual processing deceleration",
+              "target": "Visual processing deceleration",
+              "anchor": null,
+              "label": "Visual processing deceleration"
+            }
+          ]
+        },
+        {
+          "slug": "distortions",
+          "label": "Distortions",
+          "effects": [
+            {
+              "name": "After images",
+              "target": "After images",
+              "anchor": null,
+              "label": "After images"
+            },
+            {
+              "name": "Brightness alteration",
+              "target": "Brightness alteration",
+              "anchor": null,
+              "label": "Brightness alteration"
+            },
+            {
+              "name": "Color replacement",
+              "target": "Color replacement",
+              "anchor": null,
+              "label": "Color replacement"
+            },
+            {
+              "name": "Color shifting",
+              "target": "Color shifting",
+              "anchor": null,
+              "label": "Color shifting"
+            },
+            {
+              "name": "Color tinting",
+              "target": "Color tinting",
+              "anchor": null,
+              "label": "Color tinting"
+            },
+            {
+              "name": "Depth perception distortions",
+              "target": "Depth perception distortions",
+              "anchor": null,
+              "label": "Depth perception distortions"
+            },
+            {
+              "name": "Diffraction",
+              "target": "Diffraction",
+              "anchor": null,
+              "label": "Diffraction"
+            },
+            {
+              "name": "Drifting",
+              "target": "Drifting",
+              "anchor": null,
+              "label": "Drifting"
+            },
+            {
+              "name": "Morphing",
+              "target": "Drifting",
+              "anchor": "Morphing",
+              "label": "Morphing"
+            },
+            {
+              "name": "Breathing",
+              "target": "Drifting",
+              "anchor": "Breathing",
+              "label": "Breathing"
+            },
+            {
+              "name": "Melting",
+              "target": "Drifting",
+              "anchor": "Melting",
+              "label": "Melting"
+            },
+            {
+              "name": "Flowing",
+              "target": "Drifting",
+              "anchor": "Flowing",
+              "label": "Flowing"
+            },
+            {
+              "name": "Environmental cubism",
+              "target": "Environmental cubism",
+              "anchor": null,
+              "label": "Environmental cubism"
+            },
+            {
+              "name": "Environmental patterning",
+              "target": "Environmental patterning",
+              "anchor": null,
+              "label": "Environmental patterning"
+            },
+            {
+              "name": "Environmental orbism",
+              "target": "Environmental orbism",
+              "anchor": null,
+              "label": "Environmental orbism"
+            },
+            {
+              "name": "Object alteration",
+              "target": "Object alteration",
+              "anchor": null,
+              "label": "Object alteration"
+            },
+            {
+              "name": "Perspective distortion",
+              "target": "Perspective distortion",
+              "anchor": null,
+              "label": "Perspective distortion"
+            },
+            {
+              "name": "Recursion",
+              "target": "Recursion",
+              "anchor": null,
+              "label": "Recursion"
+            },
+            {
+              "name": "Scenery slicing",
+              "target": "Scenery slicing",
+              "anchor": null,
+              "label": "Scenery slicing"
+            },
+            {
+              "name": "Symmetrical texture repetition",
+              "target": "Symmetrical texture repetition",
+              "anchor": null,
+              "label": "Symmetrical texture repetition"
+            },
+            {
+              "name": "Texture liquidation",
+              "target": "Texture liquidation",
+              "anchor": null,
+              "label": "Texture liquidation"
+            },
+            {
+              "name": "Tracers",
+              "target": "Tracers",
+              "anchor": null,
+              "label": "Tracers"
+            },
+            {
+              "name": "Visual flipping",
+              "target": "Visual flipping",
+              "anchor": null,
+              "label": "Visual flipping"
+            },
+            {
+              "name": "Visual haze",
+              "target": "Visual haze",
+              "anchor": null,
+              "label": "Visual haze"
+            },
+            {
+              "name": "Visual stretching",
+              "target": "Visual stretching",
+              "anchor": null,
+              "label": "Visual stretching"
+            }
+          ]
+        },
+        {
+          "slug": "geometry",
+          "label": "Geometry",
+          "effects": [
+            {
+              "name": "Geometry",
+              "target": "Geometry",
+              "anchor": null,
+              "label": "Geometry"
+            },
+            {
+              "name": "8A - Perceived exposure to semantic concept network",
+              "target": "Geometry",
+              "anchor": "8A - Perceived exposure to semantic concept network",
+              "label": "8A - Perceived exposure to semantic concept network"
+            },
+            {
+              "name": "8B - Perceived exposure to inner mechanics of consciousness",
+              "target": "Geometry",
+              "anchor": "8B - Perceived exposure to inner mechanics of consciousness",
+              "label": "8B - Perceived exposure to inner mechanics of consciousness"
+            }
+          ]
+        },
+        {
+          "slug": "hallucinatory_states",
+          "label": "Hallucinatory states",
+          "effects": [
+            {
+              "name": "Autonomous entity",
+              "target": "Autonomous entity",
+              "anchor": null,
+              "label": "Autonomous entity"
+            },
+            {
+              "name": "External hallucination",
+              "target": "External hallucination",
+              "anchor": null,
+              "label": "External hallucination"
+            },
+            {
+              "name": "Internal hallucination",
+              "target": "Internal hallucination",
+              "anchor": null,
+              "label": "Internal hallucination"
+            },
+            {
+              "name": "Object activation",
+              "target": "Object activation",
+              "anchor": null,
+              "label": "Object activation"
+            },
+            {
+              "name": "Perspective hallucination",
+              "target": "Perspective hallucination",
+              "anchor": null,
+              "label": "Perspective hallucination"
+            },
+            {
+              "name": "Settings, sceneries, and landscapes",
+              "target": "Settings, sceneries, and landscapes",
+              "anchor": null,
+              "label": "Settings, sceneries, and landscapes"
+            },
+            {
+              "name": "Shadow people",
+              "target": "Shadow people",
+              "anchor": null,
+              "label": "Shadow people"
+            },
+            {
+              "name": "Transformations",
+              "target": "Transformations",
+              "anchor": null,
+              "label": "Transformations"
+            },
+            {
+              "name": "Unspeakable horrors",
+              "target": "Unspeakable horrors",
+              "anchor": null,
+              "label": "Unspeakable horrors"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cognitive",
+      "label": "Cognitive effects",
+      "subcategories": [
+        {
+          "slug": "enhancements",
+          "label": "Enhancements",
+          "effects": [
+            {
+              "name": "Analysis enhancement",
+              "target": "Analysis enhancement",
+              "anchor": null,
+              "label": "Analysis enhancement"
+            },
+            {
+              "name": "Creativity enhancement",
+              "target": "Creativity enhancement",
+              "anchor": null,
+              "label": "Creativity enhancement"
+            },
+            {
+              "name": "Empathy, affection, and sociability enhancement",
+              "target": "Empathy, affection, and sociability enhancement",
+              "anchor": null,
+              "label": "Empathy, affection, and sociability enhancement"
+            },
+            {
+              "name": "Increased music appreciation",
+              "target": "Increased music appreciation",
+              "anchor": null,
+              "label": "Increased music appreciation"
+            },
+            {
+              "name": "Increased sense of humor",
+              "target": "Increased sense of humor",
+              "anchor": null,
+              "label": "Increased sense of humor"
+            },
+            {
+              "name": "Memory enhancement",
+              "target": "Memory enhancement",
+              "anchor": null,
+              "label": "Memory enhancement"
+            },
+            {
+              "name": "Motivation enhancement",
+              "target": "Motivation enhancement",
+              "anchor": null,
+              "label": "Motivation enhancement"
+            },
+            {
+              "name": "Novelty enhancement",
+              "target": "Novelty enhancement",
+              "anchor": null,
+              "label": "Novelty enhancement"
+            },
+            {
+              "name": "Thought connectivity",
+              "target": "Thought connectivity",
+              "anchor": null,
+              "label": "Thought connectivity"
+            },
+            {
+              "name": "Thought organization",
+              "target": "Thought organization",
+              "anchor": null,
+              "label": "Thought organization"
+            }
+          ]
+        },
+        {
+          "slug": "depressions",
+          "label": "Depressions",
+          "effects": [
+            {
+              "name": "Amnesia",
+              "target": "Amnesia",
+              "anchor": null,
+              "label": "Amnesia"
+            },
+            {
+              "name": "Analysis depression",
+              "target": "Analysis depression",
+              "anchor": null,
+              "label": "Analysis depression"
+            },
+            {
+              "name": "Anhedonia",
+              "target": "Anhedonia",
+              "anchor": null,
+              "label": "Anhedonia"
+            },
+            {
+              "name": "Cognitive fatigue",
+              "target": "Cognitive fatigue",
+              "anchor": null,
+              "label": "Cognitive fatigue"
+            },
+            {
+              "name": "Confusion",
+              "target": "Confusion",
+              "anchor": null,
+              "label": "Confusion"
+            },
+            {
+              "name": "Delirium",
+              "target": "Delirium",
+              "anchor": null,
+              "label": "Delirium"
+            },
+            {
+              "name": "Creativity depression",
+              "target": "Creativity depression",
+              "anchor": null,
+              "label": "Creativity depression"
+            },
+            {
+              "name": "Language depression",
+              "target": "Language depression",
+              "anchor": null,
+              "label": "Language depression"
+            },
+            {
+              "name": "Motivation depression",
+              "target": "Motivation depression",
+              "anchor": null,
+              "label": "Motivation depression"
+            },
+            {
+              "name": "Sociability depression",
+              "target": "Sociability depression",
+              "anchor": null,
+              "label": "Sociability depression"
+            },
+            {
+              "name": "Thought disorganization",
+              "target": "Thought disorganization",
+              "anchor": null,
+              "label": "Thought disorganization"
+            }
+          ]
+        },
+        {
+          "slug": "intensifications",
+          "label": "Intensifications",
+          "effects": [
+            {
+              "name": "Anxiety",
+              "target": "Anxiety",
+              "anchor": null,
+              "label": "Anxiety"
+            },
+            {
+              "name": "Dream potentiation",
+              "target": "Dream potentiation",
+              "anchor": null,
+              "label": "Dream potentiation"
+            },
+            {
+              "name": "Coincidence intensification",
+              "target": "Coincidence intensification",
+              "anchor": null,
+              "label": "Coincidence intensification"
+            },
+            {
+              "name": "Ego inflation",
+              "target": "Ego inflation",
+              "anchor": null,
+              "label": "Ego inflation"
+            },
+            {
+              "name": "Emotion intensification",
+              "target": "Emotion intensification",
+              "anchor": null,
+              "label": "Emotion intensification"
+            },
+            {
+              "name": "Focus intensification",
+              "target": "Focus intensification",
+              "anchor": null,
+              "label": "Focus intensification"
+            },
+            {
+              "name": "Immersion intensification",
+              "target": "Immersion intensification",
+              "anchor": null,
+              "label": "Immersion intensification"
+            },
+            {
+              "name": "Irritability",
+              "target": "Irritability",
+              "anchor": null,
+              "label": "Irritability"
+            },
+            {
+              "name": "Personal meaning intensification",
+              "target": "Personal meaning intensification",
+              "anchor": null,
+              "label": "Personal meaning intensification"
+            },
+            {
+              "name": "Suggestibility intensification",
+              "target": "Suggestibility intensification",
+              "anchor": null,
+              "label": "Suggestibility intensification"
+            },
+            {
+              "name": "Thought acceleration",
+              "target": "Thought acceleration",
+              "anchor": null,
+              "label": "Thought acceleration"
+            },
+            {
+              "name": "Wakefulness",
+              "target": "Wakefulness",
+              "anchor": null,
+              "label": "Wakefulness"
+            }
+          ]
+        },
+        {
+          "slug": "suppressions",
+          "label": "Suppressions",
+          "effects": [
+            {
+              "name": "Addiction suppression",
+              "target": "Addiction suppression",
+              "anchor": null,
+              "label": "Addiction suppression"
+            },
+            {
+              "name": "Anxiety suppression",
+              "target": "Anxiety suppression",
+              "anchor": null,
+              "label": "Anxiety suppression"
+            },
+            {
+              "name": "Disinhibition",
+              "target": "Disinhibition",
+              "anchor": null,
+              "label": "Disinhibition"
+            },
+            {
+              "name": "Dream suppression",
+              "target": "Dream suppression",
+              "anchor": null,
+              "label": "Dream suppression"
+            },
+            {
+              "name": "Emotion suppression",
+              "target": "Emotion suppression",
+              "anchor": null,
+              "label": "Emotion suppression"
+            },
+            {
+              "name": "Focus suppression",
+              "target": "Focus suppression",
+              "anchor": null,
+              "label": "Focus suppression"
+            },
+            {
+              "name": "Memory suppression",
+              "target": "Memory suppression",
+              "anchor": null,
+              "label": "Memory suppression"
+            },
+            {
+              "name": "Personal bias suppression",
+              "target": "Personal bias suppression",
+              "anchor": null,
+              "label": "Personal bias suppression"
+            },
+            {
+              "name": "Sleepiness",
+              "target": "Sleepiness",
+              "anchor": null,
+              "label": "Sleepiness"
+            },
+            {
+              "name": "Suggestibility suppression",
+              "target": "Suggestibility suppression",
+              "anchor": null,
+              "label": "Suggestibility suppression"
+            },
+            {
+              "name": "Thought deceleration",
+              "target": "Thought deceleration",
+              "anchor": null,
+              "label": "Thought deceleration"
+            }
+          ]
+        },
+        {
+          "slug": "novel",
+          "label": "Novel",
+          "effects": [
+            {
+              "name": "Cognitive dysphoria",
+              "target": "Cognitive dysphoria",
+              "anchor": null,
+              "label": "Cognitive dysphoria"
+            },
+            {
+              "name": "Cognitive euphoria",
+              "target": "Cognitive euphoria",
+              "anchor": null,
+              "label": "Cognitive euphoria"
+            },
+            {
+              "name": "Compulsive redosing",
+              "target": "Compulsive redosing",
+              "anchor": null,
+              "label": "Compulsive redosing"
+            },
+            {
+              "name": "Conceptual thinking",
+              "target": "Conceptual thinking",
+              "anchor": null,
+              "label": "Conceptual thinking"
+            },
+            {
+              "name": "Glossolalia",
+              "target": "Glossolalia",
+              "anchor": null,
+              "label": "Glossolalia"
+            },
+            {
+              "name": "Multiple thought streams",
+              "target": "Multiple thought streams",
+              "anchor": null,
+              "label": "Multiple thought streams"
+            },
+            {
+              "name": "Simultaneous emotions",
+              "target": "Simultaneous emotions",
+              "anchor": null,
+              "label": "Simultaneous emotions"
+            },
+            {
+              "name": "Thought loop",
+              "target": "Thought loop",
+              "anchor": null,
+              "label": "Thought loop"
+            },
+            {
+              "name": "Time distortion",
+              "target": "Time distortion",
+              "anchor": null,
+              "label": "Time distortion"
+            },
+            {
+              "name": "Atemporality",
+              "target": "Atemporality",
+              "anchor": null,
+              "label": "Atemporality"
+            },
+            {
+              "name": "Time compression",
+              "target": "Time distortion",
+              "anchor": "Time compression",
+              "label": "Time compression"
+            },
+            {
+              "name": "Time dilation",
+              "target": "Time distortion",
+              "anchor": "Time dilation",
+              "label": "Time dilation"
+            },
+            {
+              "name": "Time reversal",
+              "target": "Time distortion",
+              "anchor": "Time reversal",
+              "label": "Time reversal"
+            }
+          ]
+        },
+        {
+          "slug": "psychological",
+          "label": "Psychological",
+          "effects": [
+            {
+              "name": "Catharsis",
+              "target": "Catharsis",
+              "anchor": null,
+              "label": "Catharsis"
+            },
+            {
+              "name": "Delusions",
+              "target": "Delusion",
+              "anchor": null,
+              "label": "Delusions"
+            },
+            {
+              "name": "Depersonalization",
+              "target": "Depersonalization",
+              "anchor": null,
+              "label": "Depersonalization"
+            },
+            {
+              "name": "Derealization",
+              "target": "Derealization",
+              "anchor": null,
+              "label": "Derealization"
+            },
+            {
+              "name": "Depression",
+              "target": "Depression",
+              "anchor": null,
+              "label": "Depression"
+            },
+            {
+              "name": "Depression reduction",
+              "target": "Depression reduction",
+              "anchor": null,
+              "label": "Depression reduction"
+            },
+            {
+              "name": "Euthymia",
+              "target": "Euthymia",
+              "anchor": null,
+              "label": "Euthymia"
+            },
+            {
+              "name": "Ego replacement",
+              "target": "Ego replacement",
+              "anchor": null,
+              "label": "Ego replacement"
+            },
+            {
+              "name": "Feelings of impending doom",
+              "target": "Feelings of impending doom",
+              "anchor": null,
+              "label": "Feelings of impending doom"
+            },
+            {
+              "name": "Increased introspection",
+              "target": "Increased introspection",
+              "anchor": null,
+              "label": "Increased introspection"
+            },
+            {
+              "name": "Mania",
+              "target": "Mania",
+              "anchor": null,
+              "label": "Mania"
+            },
+            {
+              "name": "Mindfulness",
+              "target": "Mindfulness",
+              "anchor": null,
+              "label": "Mindfulness"
+            },
+            {
+              "name": "Panic attack",
+              "target": "Panic attack",
+              "anchor": null,
+              "label": "Panic attack"
+            },
+            {
+              "name": "Paranoia",
+              "target": "Paranoia",
+              "anchor": null,
+              "label": "Paranoia"
+            },
+            {
+              "name": "Personality regression",
+              "target": "Personality regression",
+              "anchor": null,
+              "label": "Personality regression"
+            },
+            {
+              "name": "Psychosis",
+              "target": "Psychosis",
+              "anchor": null,
+              "label": "Psychosis"
+            },
+            {
+              "name": "Rejuvenation",
+              "target": "Rejuvenation",
+              "anchor": null,
+              "label": "Rejuvenation"
+            },
+            {
+              "name": "Suicidal ideation",
+              "target": "Suicidal ideation",
+              "anchor": null,
+              "label": "Suicidal ideation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "physical",
+      "label": "Physical effects",
+      "subcategories": [
+        {
+          "slug": "amplifications",
+          "label": "Amplifications",
+          "effects": [
+            {
+              "name": "Appetite intensification",
+              "target": "Appetite intensification",
+              "anchor": null,
+              "label": "Appetite intensification"
+            },
+            {
+              "name": "Bodily control enhancement",
+              "target": "Bodily control enhancement",
+              "anchor": null,
+              "label": "Bodily control enhancement"
+            },
+            {
+              "name": "Increased libido",
+              "target": "Increased libido",
+              "anchor": null,
+              "label": "Increased libido"
+            },
+            {
+              "name": "Increased respiration",
+              "target": "Increased respiration",
+              "anchor": null,
+              "label": "Increased respiration"
+            },
+            {
+              "name": "Increased salivation",
+              "target": "Increased salivation",
+              "anchor": null,
+              "label": "Increased salivation"
+            },
+            {
+              "name": "Stamina intensification",
+              "target": "Stamina enhancement",
+              "anchor": null,
+              "label": "Stamina intensification"
+            },
+            {
+              "name": "Stimulation",
+              "target": "Stimulation",
+              "anchor": null,
+              "label": "Stimulation"
+            }
+          ]
+        },
+        {
+          "slug": "suppressions",
+          "label": "Suppressions",
+          "effects": [
+            {
+              "name": "Appetite suppression",
+              "target": "Appetite suppression",
+              "anchor": null,
+              "label": "Appetite suppression"
+            },
+            {
+              "name": "Cough suppression",
+              "target": "Cough suppression",
+              "anchor": null,
+              "label": "Cough suppression"
+            },
+            {
+              "name": "Decreased libido",
+              "target": "Decreased libido",
+              "anchor": null,
+              "label": "Decreased libido"
+            },
+            {
+              "name": "Motor control loss",
+              "target": "Motor control loss",
+              "anchor": null,
+              "label": "Motor control loss"
+            },
+            {
+              "name": "Nausea suppression",
+              "target": "Nausea suppression",
+              "anchor": null,
+              "label": "Nausea suppression"
+            },
+            {
+              "name": "Orgasm depression",
+              "target": "Orgasm depression",
+              "anchor": null,
+              "label": "Orgasm depression"
+            },
+            {
+              "name": "Pain relief",
+              "target": "Pain relief",
+              "anchor": null,
+              "label": "Pain relief"
+            },
+            {
+              "name": "Sedation",
+              "target": "Sedation",
+              "anchor": null,
+              "label": "Sedation"
+            },
+            {
+              "name": "Seizure suppression",
+              "target": "Seizure suppression",
+              "anchor": null,
+              "label": "Seizure suppression"
+            }
+          ]
+        },
+        {
+          "slug": "alterations",
+          "label": "Alterations",
+          "effects": [
+            {
+              "name": "Body odor alteration",
+              "target": "Body odor alteration",
+              "anchor": null,
+              "label": "Body odor alteration"
+            },
+            {
+              "name": "Bronchodilation",
+              "target": "Bronchodilation",
+              "anchor": null,
+              "label": "Bronchodilation"
+            },
+            {
+              "name": "Changes in felt bodily form",
+              "target": "Changes in felt bodily form",
+              "anchor": null,
+              "label": "Changes in felt bodily form"
+            },
+            {
+              "name": "Changes in felt gravity",
+              "target": "Changes in felt gravity",
+              "anchor": null,
+              "label": "Changes in felt gravity"
+            },
+            {
+              "name": "Excessive yawning",
+              "target": "Excessive yawning",
+              "anchor": null,
+              "label": "Excessive yawning"
+            },
+            {
+              "name": "Laughter fits",
+              "target": "Laughter fits",
+              "anchor": null,
+              "label": "Laughter fits"
+            },
+            {
+              "name": "Mouth numbing",
+              "target": "Mouth numbing",
+              "anchor": null,
+              "label": "Mouth numbing"
+            },
+            {
+              "name": "Muscle relaxation",
+              "target": "Muscle relaxation",
+              "anchor": null,
+              "label": "Muscle relaxation"
+            },
+            {
+              "name": "Perception of bodily heaviness",
+              "target": "Perception of bodily heaviness",
+              "anchor": null,
+              "label": "Perception of bodily heaviness"
+            },
+            {
+              "name": "Perception of bodily lightness",
+              "target": "Perception of bodily lightness",
+              "anchor": null,
+              "label": "Perception of bodily lightness"
+            },
+            {
+              "name": "Physical autonomy",
+              "target": "Physical autonomy",
+              "anchor": null,
+              "label": "Physical autonomy"
+            },
+            {
+              "name": "Physical euphoria",
+              "target": "Physical euphoria",
+              "anchor": null,
+              "label": "Physical euphoria"
+            },
+            {
+              "name": "Pupil constriction",
+              "target": "Pupil constriction",
+              "anchor": null,
+              "label": "Pupil constriction"
+            },
+            {
+              "name": "Pupil dilation",
+              "target": "Pupil dilation",
+              "anchor": null,
+              "label": "Pupil dilation"
+            }
+          ]
+        },
+        {
+          "slug": "cardiovascular",
+          "label": "Cardiovascular",
+          "effects": [
+            {
+              "name": "Abnormal heartbeat",
+              "target": "Abnormal heartbeat",
+              "anchor": null,
+              "label": "Abnormal heartbeat"
+            },
+            {
+              "name": "Decreased blood pressure",
+              "target": "Decreased blood pressure",
+              "anchor": null,
+              "label": "Decreased blood pressure"
+            },
+            {
+              "name": "Decreased heart rate",
+              "target": "Decreased heart rate",
+              "anchor": null,
+              "label": "Decreased heart rate"
+            },
+            {
+              "name": "Increased blood pressure",
+              "target": "Increased blood pressure",
+              "anchor": null,
+              "label": "Increased blood pressure"
+            },
+            {
+              "name": "Increased heart rate",
+              "target": "Increased heart rate",
+              "anchor": null,
+              "label": "Increased heart rate"
+            },
+            {
+              "name": "Vasoconstriction",
+              "target": "Vasoconstriction",
+              "anchor": null,
+              "label": "Vasoconstriction"
+            },
+            {
+              "name": "Vasodilation",
+              "target": "Vasodilation",
+              "anchor": null,
+              "label": "Vasodilation"
+            }
+          ]
+        },
+        {
+          "slug": "cerebrovascular",
+          "label": "Cerebrovascular",
+          "effects": [
+            {
+              "name": "Brain zaps",
+              "target": "Brain zaps",
+              "anchor": null,
+              "label": "Brain zaps"
+            },
+            {
+              "name": "Dizziness",
+              "target": "Dizziness",
+              "anchor": null,
+              "label": "Dizziness"
+            },
+            {
+              "name": "Headache",
+              "target": "Headache",
+              "anchor": null,
+              "label": "Headache"
+            },
+            {
+              "name": "Increased bodily temperature",
+              "target": "Increased bodily temperature",
+              "anchor": null,
+              "label": "Increased bodily temperature"
+            },
+            {
+              "name": "Seizure",
+              "target": "Seizure",
+              "anchor": null,
+              "label": "Seizure"
+            },
+            {
+              "name": "Temperature regulation suppression",
+              "target": "Temperature regulation suppression",
+              "anchor": null,
+              "label": "Temperature regulation suppression"
+            }
+          ]
+        },
+        {
+          "slug": "bodily",
+          "label": "Bodily",
+          "effects": [
+            {
+              "name": "Back pain",
+              "target": "Back pain",
+              "anchor": null,
+              "label": "Back pain"
+            },
+            {
+              "name": "Bodily pressures",
+              "target": "Bodily pressures",
+              "anchor": null,
+              "label": "Bodily pressures"
+            },
+            {
+              "name": "Constipation",
+              "target": "Constipation",
+              "anchor": null,
+              "label": "Constipation"
+            },
+            {
+              "name": "Dehydration",
+              "target": "Dehydration",
+              "anchor": null,
+              "label": "Dehydration"
+            },
+            {
+              "name": "Diarrhea",
+              "target": "Diarrhea",
+              "anchor": null,
+              "label": "Diarrhea"
+            },
+            {
+              "name": "Difficulty urinating",
+              "target": "Difficulty urinating",
+              "anchor": null,
+              "label": "Difficulty urinating"
+            },
+            {
+              "name": "Dry mouth",
+              "target": "Dry mouth",
+              "anchor": null,
+              "label": "Dry mouth"
+            },
+            {
+              "name": "Frequent urination",
+              "target": "Frequent urination",
+              "anchor": null,
+              "label": "Frequent urination"
+            },
+            {
+              "name": "Increased perspiration",
+              "target": "Increased perspiration",
+              "anchor": null,
+              "label": "Increased perspiration"
+            },
+            {
+              "name": "Increased phlegm production",
+              "target": "Increased phlegm production",
+              "anchor": null,
+              "label": "Increased phlegm production"
+            },
+            {
+              "name": "Itchiness",
+              "target": "Itchiness",
+              "anchor": null,
+              "label": "Itchiness"
+            },
+            {
+              "name": "Muscle contractions",
+              "target": "Muscle contractions",
+              "anchor": null,
+              "label": "Muscle contractions"
+            },
+            {
+              "name": "Muscle cramps",
+              "target": "Muscle cramps",
+              "anchor": null,
+              "label": "Muscle cramps"
+            },
+            {
+              "name": "Muscle twitching",
+              "target": "Muscle twitching",
+              "anchor": null,
+              "label": "Muscle twitching"
+            },
+            {
+              "name": "Muscle tension",
+              "target": "Muscle tension",
+              "anchor": null,
+              "label": "Muscle tension"
+            },
+            {
+              "name": "Nausea",
+              "target": "Nausea",
+              "anchor": null,
+              "label": "Nausea"
+            },
+            {
+              "name": "Vomiting",
+              "target": "Vomiting",
+              "anchor": null,
+              "label": "Vomiting"
+            },
+            {
+              "name": "Optical sliding",
+              "target": "Optical sliding",
+              "anchor": null,
+              "label": "Optical sliding"
+            },
+            {
+              "name": "Photophobia",
+              "target": "Photophobia",
+              "anchor": null,
+              "label": "Photophobia"
+            },
+            {
+              "name": "Physical fatigue",
+              "target": "Physical fatigue",
+              "anchor": null,
+              "label": "Physical fatigue"
+            },
+            {
+              "name": "Respiratory depression",
+              "target": "Respiratory depression",
+              "anchor": null,
+              "label": "Respiratory depression"
+            },
+            {
+              "name": "Restless legs",
+              "target": "Restless legs",
+              "anchor": null,
+              "label": "Restless legs"
+            },
+            {
+              "name": "Runny nose",
+              "target": "Runny nose",
+              "anchor": null,
+              "label": "Runny nose"
+            },
+            {
+              "name": "Skin flushing",
+              "target": "Skin flushing",
+              "anchor": null,
+              "label": "Skin flushing"
+            },
+            {
+              "name": "Stomach bloating",
+              "target": "Stomach bloating",
+              "anchor": null,
+              "label": "Stomach bloating"
+            },
+            {
+              "name": "Stomach cramp",
+              "target": "Stomach cramp",
+              "anchor": null,
+              "label": "Stomach cramp"
+            },
+            {
+              "name": "Teeth grinding",
+              "target": "Teeth grinding",
+              "anchor": null,
+              "label": "Teeth grinding"
+            },
+            {
+              "name": "Temporary erectile dysfunction",
+              "target": "Temporary erectile dysfunction",
+              "anchor": null,
+              "label": "Temporary erectile dysfunction"
+            },
+            {
+              "name": "Vibrating vision",
+              "target": "Vibrating vision",
+              "anchor": null,
+              "label": "Vibrating vision"
+            },
+            {
+              "name": "Watery eyes",
+              "target": "Watery eyes",
+              "anchor": null,
+              "label": "Watery eyes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "auditory",
+      "label": "Auditory effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "General",
+          "effects": [
+            {
+              "name": "Auditory acuity enhancement",
+              "target": "Auditory acuity enhancement",
+              "anchor": null,
+              "label": "Auditory acuity enhancement"
+            },
+            {
+              "name": "Auditory acuity suppression",
+              "target": "Auditory acuity suppression",
+              "anchor": null,
+              "label": "Auditory acuity suppression"
+            },
+            {
+              "name": "Auditory distortion",
+              "target": "Auditory distortion",
+              "anchor": null,
+              "label": "Auditory distortion"
+            },
+            {
+              "name": "Auditory hallucination",
+              "target": "Auditory hallucination",
+              "anchor": null,
+              "label": "Auditory hallucination"
+            },
+            {
+              "name": "Autonomous voice communication",
+              "target": "Autonomous voice communication",
+              "anchor": null,
+              "label": "Autonomous voice communication"
+            },
+            {
+              "name": "External auditory hallucination",
+              "target": "External auditory hallucination",
+              "anchor": null,
+              "label": "External auditory hallucination"
+            },
+            {
+              "name": "Internal auditory hallucination",
+              "target": "Auditory_hallucination",
+              "anchor": "Internal_auditory_hallucination",
+              "label": "Internal auditory hallucination"
+            },
+            {
+              "name": "Auditory misinterpretation",
+              "target": "Auditory misinterpretation",
+              "anchor": null,
+              "label": "Auditory misinterpretation"
+            },
+            {
+              "name": "Temporal scaling",
+              "target": "Temporal scaling",
+              "anchor": null,
+              "label": "Temporal scaling"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "multisensory",
+      "label": "Multisensory effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "General",
+          "effects": [
+            {
+              "name": "Anticipatory response",
+              "target": "Anticipatory response",
+              "anchor": null,
+              "label": "Anticipatory response"
+            },
+            {
+              "name": "Component controllability",
+              "target": "Component controllability",
+              "anchor": null,
+              "label": "Component controllability"
+            },
+            {
+              "name": "Dosage independent intensity",
+              "target": "Dosage independent intensity",
+              "anchor": null,
+              "label": "Dosage independent intensity"
+            },
+            {
+              "name": "Machinescapes",
+              "target": "Machinescapes",
+              "anchor": null,
+              "label": "Machinescapes"
+            },
+            {
+              "name": "Memory replays",
+              "target": "Memory replays",
+              "anchor": null,
+              "label": "Memory replays"
+            },
+            {
+              "name": "Scenarios and plots",
+              "target": "Scenarios and plots",
+              "anchor": null,
+              "label": "Scenarios and plots"
+            },
+            {
+              "name": "Spatial disorientation",
+              "target": "Spatial disorientation",
+              "anchor": null,
+              "label": "Spatial disorientation"
+            },
+            {
+              "name": "Spontaneous physical movements",
+              "target": "Spontaneous physical movements",
+              "anchor": null,
+              "label": "Spontaneous physical movements"
+            },
+            {
+              "name": "Synaesthesia",
+              "target": "Synaesthesia",
+              "anchor": null,
+              "label": "Synaesthesia"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "transpersonal",
+      "label": "Transpersonal effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "Transpersonal",
+          "effects": [
+            {
+              "name": "Ego dissolution",
+              "target": "Memory suppression",
+              "anchor": null,
+              "label": "Ego dissolution"
+            },
+            {
+              "name": "Existential self-realization",
+              "target": "Existential self-realization",
+              "anchor": null,
+              "label": "Existential self-realization"
+            },
+            {
+              "name": "Identity alteration",
+              "target": "Identity alteration",
+              "anchor": null,
+              "label": "Identity alteration"
+            },
+            {
+              "name": "Perceived exposure to inner mechanics of consciousness",
+              "target": "Perceived exposure to inner mechanics of consciousness",
+              "anchor": null,
+              "label": "Perceived exposure to inner mechanics of consciousness"
+            },
+            {
+              "name": "Perception of eternalism",
+              "target": "Perception of eternalism",
+              "anchor": null,
+              "label": "Perception of eternalism"
+            },
+            {
+              "name": "Perception of interdependent opposites",
+              "target": "Perception of interdependent opposites",
+              "anchor": null,
+              "label": "Perception of interdependent opposites"
+            },
+            {
+              "name": "Perception of predeterminism",
+              "target": "Perception of predeterminism",
+              "anchor": null,
+              "label": "Perception of predeterminism"
+            },
+            {
+              "name": "Perception of self-design",
+              "target": "Perception of self-design",
+              "anchor": null,
+              "label": "Perception of self-design"
+            },
+            {
+              "name": "Spirituality intensification",
+              "target": "Spirituality intensification",
+              "anchor": null,
+              "label": "Spirituality intensification"
+            },
+            {
+              "name": "Unity and interconnectedness",
+              "target": "Unity and interconnectedness",
+              "anchor": null,
+              "label": "Unity and interconnectedness"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "disconnective",
+      "label": "Disconnective effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "General",
+          "effects": [
+            {
+              "name": "Cognitive disconnection",
+              "target": "Cognitive disconnection",
+              "anchor": null,
+              "label": "Cognitive disconnection"
+            },
+            {
+              "name": "Déjà vu",
+              "target": "Déjà vu",
+              "anchor": null,
+              "label": "Déjà vu"
+            },
+            {
+              "name": "Detachment plateaus",
+              "target": "Detachment plateaus",
+              "anchor": null,
+              "label": "Detachment plateaus"
+            },
+            {
+              "name": "Physical disconnection",
+              "target": "Physical disconnection",
+              "anchor": null,
+              "label": "Physical disconnection"
+            },
+            {
+              "name": "Visual disconnection",
+              "target": "Visual disconnection",
+              "anchor": null,
+              "label": "Visual disconnection"
+            },
+            {
+              "name": "Holes, spaces and voids",
+              "target": "Visual_disconnection",
+              "anchor": "Holes.2C_spaces_and_voids",
+              "label": "Holes, spaces and voids"
+            },
+            {
+              "name": "Structures",
+              "target": "Visual_disconnection",
+              "anchor": "Structures",
+              "label": "Structures"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "tactile",
+      "label": "Tactile effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "General",
+          "effects": [
+            {
+              "name": "Spontaneous bodily sensations",
+              "target": "Spontaneous bodily sensations",
+              "anchor": null,
+              "label": "Spontaneous bodily sensations"
+            },
+            {
+              "name": "Tactile hallucination",
+              "target": "Tactile hallucination",
+              "anchor": null,
+              "label": "Tactile hallucination"
+            },
+            {
+              "name": "Tactile intensification",
+              "target": "Tactile intensification",
+              "anchor": null,
+              "label": "Tactile intensification"
+            },
+            {
+              "name": "Tactile suppression",
+              "target": "Tactile suppression",
+              "anchor": null,
+              "label": "Tactile suppression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "smell_taste",
+      "label": "Smell & taste effects",
+      "subcategories": [
+        {
+          "slug": "general",
+          "label": "General",
+          "effects": [
+            {
+              "name": "Gustatory alteration",
+              "target": "Gustatory alteration",
+              "anchor": null,
+              "label": "Gustatory alteration"
+            },
+            {
+              "name": "Gustatory depression",
+              "target": "Gustatory depression",
+              "anchor": null,
+              "label": "Gustatory depression"
+            },
+            {
+              "name": "Gustatory hallucination",
+              "target": "Gustatory hallucination",
+              "anchor": null,
+              "label": "Gustatory hallucination"
+            },
+            {
+              "name": "Gustatory intensification",
+              "target": "Gustatory intensification",
+              "anchor": null,
+              "label": "Gustatory intensification"
+            },
+            {
+              "name": "Olfactory depression",
+              "target": "Olfactory depression",
+              "anchor": null,
+              "label": "Olfactory depression"
+            },
+            {
+              "name": "Olfactory hallucination",
+              "target": "Olfactory hallucination",
+              "anchor": null,
+              "label": "Olfactory hallucination"
+            },
+            {
+              "name": "Olfactory intensification",
+              "target": "Olfactory intensification",
+              "anchor": null,
+              "label": "Olfactory intensification"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "index": {
+    "color enhancement": {
+      "name": "Color enhancement",
+      "category": "visual",
+      "subcategory": "amplifications",
+      "target": "Color enhancement",
+      "anchor": null
+    },
+    "magnification": {
+      "name": "Magnification",
+      "category": "visual",
+      "subcategory": "amplifications",
+      "target": "Magnification",
+      "anchor": null
+    },
+    "pattern recognition enhancement": {
+      "name": "Pattern recognition enhancement",
+      "category": "visual",
+      "subcategory": "amplifications",
+      "target": "Pattern recognition enhancement",
+      "anchor": null
+    },
+    "visual acuity enhancement": {
+      "name": "Visual acuity enhancement",
+      "category": "visual",
+      "subcategory": "amplifications",
+      "target": "Visual acuity enhancement",
+      "anchor": null
+    },
+    "visual processing acceleration": {
+      "name": "Visual processing acceleration",
+      "category": "visual",
+      "subcategory": "amplifications",
+      "target": "Visual processing acceleration",
+      "anchor": null
+    },
+    "color depression": {
+      "name": "Color depression",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Color depression",
+      "anchor": null
+    },
+    "double vision": {
+      "name": "Double vision",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Double vision",
+      "anchor": null
+    },
+    "pattern recognition suppression": {
+      "name": "Pattern recognition suppression",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Pattern recognition suppression",
+      "anchor": null
+    },
+    "peripheral information misinterpretation": {
+      "name": "Peripheral information misinterpretation",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Peripheral information misinterpretation",
+      "anchor": null
+    },
+    "visual acuity suppression": {
+      "name": "Visual acuity suppression",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Visual acuity suppression",
+      "anchor": null
+    },
+    "visual processing deceleration": {
+      "name": "Visual processing deceleration",
+      "category": "visual",
+      "subcategory": "suppressions",
+      "target": "Visual processing deceleration",
+      "anchor": null
+    },
+    "after images": {
+      "name": "After images",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "After images",
+      "anchor": null
+    },
+    "brightness alteration": {
+      "name": "Brightness alteration",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Brightness alteration",
+      "anchor": null
+    },
+    "color replacement": {
+      "name": "Color replacement",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Color replacement",
+      "anchor": null
+    },
+    "color shifting": {
+      "name": "Color shifting",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Color shifting",
+      "anchor": null
+    },
+    "color tinting": {
+      "name": "Color tinting",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Color tinting",
+      "anchor": null
+    },
+    "depth perception distortions": {
+      "name": "Depth perception distortions",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Depth perception distortions",
+      "anchor": null
+    },
+    "diffraction": {
+      "name": "Diffraction",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Diffraction",
+      "anchor": null
+    },
+    "drifting": {
+      "name": "Drifting",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Drifting",
+      "anchor": null
+    },
+    "morphing": {
+      "name": "Morphing",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Drifting",
+      "anchor": "Morphing"
+    },
+    "breathing": {
+      "name": "Breathing",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Drifting",
+      "anchor": "Breathing"
+    },
+    "melting": {
+      "name": "Melting",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Drifting",
+      "anchor": "Melting"
+    },
+    "flowing": {
+      "name": "Flowing",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Drifting",
+      "anchor": "Flowing"
+    },
+    "environmental cubism": {
+      "name": "Environmental cubism",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Environmental cubism",
+      "anchor": null
+    },
+    "environmental patterning": {
+      "name": "Environmental patterning",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Environmental patterning",
+      "anchor": null
+    },
+    "environmental orbism": {
+      "name": "Environmental orbism",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Environmental orbism",
+      "anchor": null
+    },
+    "object alteration": {
+      "name": "Object alteration",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Object alteration",
+      "anchor": null
+    },
+    "perspective distortion": {
+      "name": "Perspective distortion",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Perspective distortion",
+      "anchor": null
+    },
+    "recursion": {
+      "name": "Recursion",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Recursion",
+      "anchor": null
+    },
+    "scenery slicing": {
+      "name": "Scenery slicing",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Scenery slicing",
+      "anchor": null
+    },
+    "symmetrical texture repetition": {
+      "name": "Symmetrical texture repetition",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Symmetrical texture repetition",
+      "anchor": null
+    },
+    "texture liquidation": {
+      "name": "Texture liquidation",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Texture liquidation",
+      "anchor": null
+    },
+    "tracers": {
+      "name": "Tracers",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Tracers",
+      "anchor": null
+    },
+    "visual flipping": {
+      "name": "Visual flipping",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Visual flipping",
+      "anchor": null
+    },
+    "visual haze": {
+      "name": "Visual haze",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Visual haze",
+      "anchor": null
+    },
+    "visual stretching": {
+      "name": "Visual stretching",
+      "category": "visual",
+      "subcategory": "distortions",
+      "target": "Visual stretching",
+      "anchor": null
+    },
+    "geometry": {
+      "name": "Geometry",
+      "category": "visual",
+      "subcategory": "geometry",
+      "target": "Geometry",
+      "anchor": null
+    },
+    "8a perceived exposure to semantic concept network": {
+      "name": "8A - Perceived exposure to semantic concept network",
+      "category": "visual",
+      "subcategory": "geometry",
+      "target": "Geometry",
+      "anchor": "8A - Perceived exposure to semantic concept network"
+    },
+    "8b perceived exposure to inner mechanics of consciousness": {
+      "name": "8B - Perceived exposure to inner mechanics of consciousness",
+      "category": "visual",
+      "subcategory": "geometry",
+      "target": "Geometry",
+      "anchor": "8B - Perceived exposure to inner mechanics of consciousness"
+    },
+    "autonomous entity": {
+      "name": "Autonomous entity",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Autonomous entity",
+      "anchor": null
+    },
+    "external hallucination": {
+      "name": "External hallucination",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "External hallucination",
+      "anchor": null
+    },
+    "internal hallucination": {
+      "name": "Internal hallucination",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Internal hallucination",
+      "anchor": null
+    },
+    "object activation": {
+      "name": "Object activation",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Object activation",
+      "anchor": null
+    },
+    "perspective hallucination": {
+      "name": "Perspective hallucination",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Perspective hallucination",
+      "anchor": null
+    },
+    "settings sceneries and landscapes": {
+      "name": "Settings, sceneries, and landscapes",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Settings, sceneries, and landscapes",
+      "anchor": null
+    },
+    "shadow people": {
+      "name": "Shadow people",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Shadow people",
+      "anchor": null
+    },
+    "transformations": {
+      "name": "Transformations",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Transformations",
+      "anchor": null
+    },
+    "unspeakable horrors": {
+      "name": "Unspeakable horrors",
+      "category": "visual",
+      "subcategory": "hallucinatory_states",
+      "target": "Unspeakable horrors",
+      "anchor": null
+    },
+    "analysis enhancement": {
+      "name": "Analysis enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Analysis enhancement",
+      "anchor": null
+    },
+    "creativity enhancement": {
+      "name": "Creativity enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Creativity enhancement",
+      "anchor": null
+    },
+    "empathy affection and sociability enhancement": {
+      "name": "Empathy, affection, and sociability enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Empathy, affection, and sociability enhancement",
+      "anchor": null
+    },
+    "increased music appreciation": {
+      "name": "Increased music appreciation",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Increased music appreciation",
+      "anchor": null
+    },
+    "increased sense of humor": {
+      "name": "Increased sense of humor",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Increased sense of humor",
+      "anchor": null
+    },
+    "memory enhancement": {
+      "name": "Memory enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Memory enhancement",
+      "anchor": null
+    },
+    "motivation enhancement": {
+      "name": "Motivation enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Motivation enhancement",
+      "anchor": null
+    },
+    "novelty enhancement": {
+      "name": "Novelty enhancement",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Novelty enhancement",
+      "anchor": null
+    },
+    "thought connectivity": {
+      "name": "Thought connectivity",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Thought connectivity",
+      "anchor": null
+    },
+    "thought organization": {
+      "name": "Thought organization",
+      "category": "cognitive",
+      "subcategory": "enhancements",
+      "target": "Thought organization",
+      "anchor": null
+    },
+    "amnesia": {
+      "name": "Amnesia",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Amnesia",
+      "anchor": null
+    },
+    "analysis depression": {
+      "name": "Analysis depression",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Analysis depression",
+      "anchor": null
+    },
+    "anhedonia": {
+      "name": "Anhedonia",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Anhedonia",
+      "anchor": null
+    },
+    "cognitive fatigue": {
+      "name": "Cognitive fatigue",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Cognitive fatigue",
+      "anchor": null
+    },
+    "confusion": {
+      "name": "Confusion",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Confusion",
+      "anchor": null
+    },
+    "delirium": {
+      "name": "Delirium",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Delirium",
+      "anchor": null
+    },
+    "creativity depression": {
+      "name": "Creativity depression",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Creativity depression",
+      "anchor": null
+    },
+    "language depression": {
+      "name": "Language depression",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Language depression",
+      "anchor": null
+    },
+    "motivation depression": {
+      "name": "Motivation depression",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Motivation depression",
+      "anchor": null
+    },
+    "sociability depression": {
+      "name": "Sociability depression",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Sociability depression",
+      "anchor": null
+    },
+    "thought disorganization": {
+      "name": "Thought disorganization",
+      "category": "cognitive",
+      "subcategory": "depressions",
+      "target": "Thought disorganization",
+      "anchor": null
+    },
+    "anxiety": {
+      "name": "Anxiety",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Anxiety",
+      "anchor": null
+    },
+    "dream potentiation": {
+      "name": "Dream potentiation",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Dream potentiation",
+      "anchor": null
+    },
+    "coincidence intensification": {
+      "name": "Coincidence intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Coincidence intensification",
+      "anchor": null
+    },
+    "ego inflation": {
+      "name": "Ego inflation",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Ego inflation",
+      "anchor": null
+    },
+    "emotion intensification": {
+      "name": "Emotion intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Emotion intensification",
+      "anchor": null
+    },
+    "focus intensification": {
+      "name": "Focus intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Focus intensification",
+      "anchor": null
+    },
+    "immersion intensification": {
+      "name": "Immersion intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Immersion intensification",
+      "anchor": null
+    },
+    "irritability": {
+      "name": "Irritability",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Irritability",
+      "anchor": null
+    },
+    "personal meaning intensification": {
+      "name": "Personal meaning intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Personal meaning intensification",
+      "anchor": null
+    },
+    "suggestibility intensification": {
+      "name": "Suggestibility intensification",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Suggestibility intensification",
+      "anchor": null
+    },
+    "thought acceleration": {
+      "name": "Thought acceleration",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Thought acceleration",
+      "anchor": null
+    },
+    "wakefulness": {
+      "name": "Wakefulness",
+      "category": "cognitive",
+      "subcategory": "intensifications",
+      "target": "Wakefulness",
+      "anchor": null
+    },
+    "addiction suppression": {
+      "name": "Addiction suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Addiction suppression",
+      "anchor": null
+    },
+    "anxiety suppression": {
+      "name": "Anxiety suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Anxiety suppression",
+      "anchor": null
+    },
+    "disinhibition": {
+      "name": "Disinhibition",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Disinhibition",
+      "anchor": null
+    },
+    "dream suppression": {
+      "name": "Dream suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Dream suppression",
+      "anchor": null
+    },
+    "emotion suppression": {
+      "name": "Emotion suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Emotion suppression",
+      "anchor": null
+    },
+    "focus suppression": {
+      "name": "Focus suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Focus suppression",
+      "anchor": null
+    },
+    "memory suppression": {
+      "name": "Memory suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Memory suppression",
+      "anchor": null
+    },
+    "personal bias suppression": {
+      "name": "Personal bias suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Personal bias suppression",
+      "anchor": null
+    },
+    "sleepiness": {
+      "name": "Sleepiness",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Sleepiness",
+      "anchor": null
+    },
+    "suggestibility suppression": {
+      "name": "Suggestibility suppression",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Suggestibility suppression",
+      "anchor": null
+    },
+    "thought deceleration": {
+      "name": "Thought deceleration",
+      "category": "cognitive",
+      "subcategory": "suppressions",
+      "target": "Thought deceleration",
+      "anchor": null
+    },
+    "cognitive dysphoria": {
+      "name": "Cognitive dysphoria",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Cognitive dysphoria",
+      "anchor": null
+    },
+    "cognitive euphoria": {
+      "name": "Cognitive euphoria",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Cognitive euphoria",
+      "anchor": null
+    },
+    "compulsive redosing": {
+      "name": "Compulsive redosing",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Compulsive redosing",
+      "anchor": null
+    },
+    "conceptual thinking": {
+      "name": "Conceptual thinking",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Conceptual thinking",
+      "anchor": null
+    },
+    "glossolalia": {
+      "name": "Glossolalia",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Glossolalia",
+      "anchor": null
+    },
+    "multiple thought streams": {
+      "name": "Multiple thought streams",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Multiple thought streams",
+      "anchor": null
+    },
+    "simultaneous emotions": {
+      "name": "Simultaneous emotions",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Simultaneous emotions",
+      "anchor": null
+    },
+    "thought loop": {
+      "name": "Thought loop",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Thought loop",
+      "anchor": null
+    },
+    "time distortion": {
+      "name": "Time distortion",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Time distortion",
+      "anchor": null
+    },
+    "atemporality": {
+      "name": "Atemporality",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Atemporality",
+      "anchor": null
+    },
+    "time compression": {
+      "name": "Time compression",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Time distortion",
+      "anchor": "Time compression"
+    },
+    "time dilation": {
+      "name": "Time dilation",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Time distortion",
+      "anchor": "Time dilation"
+    },
+    "time reversal": {
+      "name": "Time reversal",
+      "category": "cognitive",
+      "subcategory": "novel",
+      "target": "Time distortion",
+      "anchor": "Time reversal"
+    },
+    "catharsis": {
+      "name": "Catharsis",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Catharsis",
+      "anchor": null
+    },
+    "delusion": {
+      "name": "Delusions",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Delusion",
+      "anchor": null
+    },
+    "delusions": {
+      "name": "Delusions",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Delusion",
+      "anchor": null
+    },
+    "depersonalization": {
+      "name": "Depersonalization",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Depersonalization",
+      "anchor": null
+    },
+    "derealization": {
+      "name": "Derealization",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Derealization",
+      "anchor": null
+    },
+    "depression": {
+      "name": "Depression",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Depression",
+      "anchor": null
+    },
+    "depression reduction": {
+      "name": "Depression reduction",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Depression reduction",
+      "anchor": null
+    },
+    "euthymia": {
+      "name": "Euthymia",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Euthymia",
+      "anchor": null
+    },
+    "ego replacement": {
+      "name": "Ego replacement",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Ego replacement",
+      "anchor": null
+    },
+    "feelings of impending doom": {
+      "name": "Feelings of impending doom",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Feelings of impending doom",
+      "anchor": null
+    },
+    "increased introspection": {
+      "name": "Increased introspection",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Increased introspection",
+      "anchor": null
+    },
+    "mania": {
+      "name": "Mania",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Mania",
+      "anchor": null
+    },
+    "mindfulness": {
+      "name": "Mindfulness",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Mindfulness",
+      "anchor": null
+    },
+    "panic attack": {
+      "name": "Panic attack",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Panic attack",
+      "anchor": null
+    },
+    "paranoia": {
+      "name": "Paranoia",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Paranoia",
+      "anchor": null
+    },
+    "personality regression": {
+      "name": "Personality regression",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Personality regression",
+      "anchor": null
+    },
+    "psychosis": {
+      "name": "Psychosis",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Psychosis",
+      "anchor": null
+    },
+    "rejuvenation": {
+      "name": "Rejuvenation",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Rejuvenation",
+      "anchor": null
+    },
+    "suicidal ideation": {
+      "name": "Suicidal ideation",
+      "category": "cognitive",
+      "subcategory": "psychological",
+      "target": "Suicidal ideation",
+      "anchor": null
+    },
+    "appetite intensification": {
+      "name": "Appetite intensification",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Appetite intensification",
+      "anchor": null
+    },
+    "bodily control enhancement": {
+      "name": "Bodily control enhancement",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Bodily control enhancement",
+      "anchor": null
+    },
+    "increased libido": {
+      "name": "Increased libido",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Increased libido",
+      "anchor": null
+    },
+    "increased respiration": {
+      "name": "Increased respiration",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Increased respiration",
+      "anchor": null
+    },
+    "increased salivation": {
+      "name": "Increased salivation",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Increased salivation",
+      "anchor": null
+    },
+    "stamina enhancement": {
+      "name": "Stamina intensification",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Stamina enhancement",
+      "anchor": null
+    },
+    "stamina intensification": {
+      "name": "Stamina intensification",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Stamina enhancement",
+      "anchor": null
+    },
+    "stimulation": {
+      "name": "Stimulation",
+      "category": "physical",
+      "subcategory": "amplifications",
+      "target": "Stimulation",
+      "anchor": null
+    },
+    "appetite suppression": {
+      "name": "Appetite suppression",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Appetite suppression",
+      "anchor": null
+    },
+    "cough suppression": {
+      "name": "Cough suppression",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Cough suppression",
+      "anchor": null
+    },
+    "decreased libido": {
+      "name": "Decreased libido",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Decreased libido",
+      "anchor": null
+    },
+    "motor control loss": {
+      "name": "Motor control loss",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Motor control loss",
+      "anchor": null
+    },
+    "nausea suppression": {
+      "name": "Nausea suppression",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Nausea suppression",
+      "anchor": null
+    },
+    "orgasm depression": {
+      "name": "Orgasm depression",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Orgasm depression",
+      "anchor": null
+    },
+    "pain relief": {
+      "name": "Pain relief",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Pain relief",
+      "anchor": null
+    },
+    "sedation": {
+      "name": "Sedation",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Sedation",
+      "anchor": null
+    },
+    "seizure suppression": {
+      "name": "Seizure suppression",
+      "category": "physical",
+      "subcategory": "suppressions",
+      "target": "Seizure suppression",
+      "anchor": null
+    },
+    "body odor alteration": {
+      "name": "Body odor alteration",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Body odor alteration",
+      "anchor": null
+    },
+    "bronchodilation": {
+      "name": "Bronchodilation",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Bronchodilation",
+      "anchor": null
+    },
+    "changes in felt bodily form": {
+      "name": "Changes in felt bodily form",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Changes in felt bodily form",
+      "anchor": null
+    },
+    "changes in felt gravity": {
+      "name": "Changes in felt gravity",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Changes in felt gravity",
+      "anchor": null
+    },
+    "excessive yawning": {
+      "name": "Excessive yawning",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Excessive yawning",
+      "anchor": null
+    },
+    "laughter fits": {
+      "name": "Laughter fits",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Laughter fits",
+      "anchor": null
+    },
+    "mouth numbing": {
+      "name": "Mouth numbing",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Mouth numbing",
+      "anchor": null
+    },
+    "muscle relaxation": {
+      "name": "Muscle relaxation",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Muscle relaxation",
+      "anchor": null
+    },
+    "perception of bodily heaviness": {
+      "name": "Perception of bodily heaviness",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Perception of bodily heaviness",
+      "anchor": null
+    },
+    "perception of bodily lightness": {
+      "name": "Perception of bodily lightness",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Perception of bodily lightness",
+      "anchor": null
+    },
+    "physical autonomy": {
+      "name": "Physical autonomy",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Physical autonomy",
+      "anchor": null
+    },
+    "physical euphoria": {
+      "name": "Physical euphoria",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Physical euphoria",
+      "anchor": null
+    },
+    "pupil constriction": {
+      "name": "Pupil constriction",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Pupil constriction",
+      "anchor": null
+    },
+    "pupil dilation": {
+      "name": "Pupil dilation",
+      "category": "physical",
+      "subcategory": "alterations",
+      "target": "Pupil dilation",
+      "anchor": null
+    },
+    "abnormal heartbeat": {
+      "name": "Abnormal heartbeat",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Abnormal heartbeat",
+      "anchor": null
+    },
+    "decreased blood pressure": {
+      "name": "Decreased blood pressure",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Decreased blood pressure",
+      "anchor": null
+    },
+    "decreased heart rate": {
+      "name": "Decreased heart rate",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Decreased heart rate",
+      "anchor": null
+    },
+    "increased blood pressure": {
+      "name": "Increased blood pressure",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Increased blood pressure",
+      "anchor": null
+    },
+    "increased heart rate": {
+      "name": "Increased heart rate",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Increased heart rate",
+      "anchor": null
+    },
+    "vasoconstriction": {
+      "name": "Vasoconstriction",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Vasoconstriction",
+      "anchor": null
+    },
+    "vasodilation": {
+      "name": "Vasodilation",
+      "category": "physical",
+      "subcategory": "cardiovascular",
+      "target": "Vasodilation",
+      "anchor": null
+    },
+    "brain zaps": {
+      "name": "Brain zaps",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Brain zaps",
+      "anchor": null
+    },
+    "dizziness": {
+      "name": "Dizziness",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Dizziness",
+      "anchor": null
+    },
+    "headache": {
+      "name": "Headache",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Headache",
+      "anchor": null
+    },
+    "increased bodily temperature": {
+      "name": "Increased bodily temperature",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Increased bodily temperature",
+      "anchor": null
+    },
+    "seizure": {
+      "name": "Seizure",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Seizure",
+      "anchor": null
+    },
+    "temperature regulation suppression": {
+      "name": "Temperature regulation suppression",
+      "category": "physical",
+      "subcategory": "cerebrovascular",
+      "target": "Temperature regulation suppression",
+      "anchor": null
+    },
+    "back pain": {
+      "name": "Back pain",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Back pain",
+      "anchor": null
+    },
+    "bodily pressures": {
+      "name": "Bodily pressures",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Bodily pressures",
+      "anchor": null
+    },
+    "constipation": {
+      "name": "Constipation",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Constipation",
+      "anchor": null
+    },
+    "dehydration": {
+      "name": "Dehydration",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Dehydration",
+      "anchor": null
+    },
+    "diarrhea": {
+      "name": "Diarrhea",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Diarrhea",
+      "anchor": null
+    },
+    "difficulty urinating": {
+      "name": "Difficulty urinating",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Difficulty urinating",
+      "anchor": null
+    },
+    "dry mouth": {
+      "name": "Dry mouth",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Dry mouth",
+      "anchor": null
+    },
+    "frequent urination": {
+      "name": "Frequent urination",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Frequent urination",
+      "anchor": null
+    },
+    "increased perspiration": {
+      "name": "Increased perspiration",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Increased perspiration",
+      "anchor": null
+    },
+    "increased phlegm production": {
+      "name": "Increased phlegm production",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Increased phlegm production",
+      "anchor": null
+    },
+    "itchiness": {
+      "name": "Itchiness",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Itchiness",
+      "anchor": null
+    },
+    "muscle contractions": {
+      "name": "Muscle contractions",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Muscle contractions",
+      "anchor": null
+    },
+    "muscle cramps": {
+      "name": "Muscle cramps",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Muscle cramps",
+      "anchor": null
+    },
+    "muscle twitching": {
+      "name": "Muscle twitching",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Muscle twitching",
+      "anchor": null
+    },
+    "muscle tension": {
+      "name": "Muscle tension",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Muscle tension",
+      "anchor": null
+    },
+    "nausea": {
+      "name": "Nausea",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Nausea",
+      "anchor": null
+    },
+    "vomiting": {
+      "name": "Vomiting",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Vomiting",
+      "anchor": null
+    },
+    "optical sliding": {
+      "name": "Optical sliding",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Optical sliding",
+      "anchor": null
+    },
+    "photophobia": {
+      "name": "Photophobia",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Photophobia",
+      "anchor": null
+    },
+    "physical fatigue": {
+      "name": "Physical fatigue",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Physical fatigue",
+      "anchor": null
+    },
+    "respiratory depression": {
+      "name": "Respiratory depression",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Respiratory depression",
+      "anchor": null
+    },
+    "restless legs": {
+      "name": "Restless legs",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Restless legs",
+      "anchor": null
+    },
+    "runny nose": {
+      "name": "Runny nose",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Runny nose",
+      "anchor": null
+    },
+    "skin flushing": {
+      "name": "Skin flushing",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Skin flushing",
+      "anchor": null
+    },
+    "stomach bloating": {
+      "name": "Stomach bloating",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Stomach bloating",
+      "anchor": null
+    },
+    "stomach cramp": {
+      "name": "Stomach cramp",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Stomach cramp",
+      "anchor": null
+    },
+    "teeth grinding": {
+      "name": "Teeth grinding",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Teeth grinding",
+      "anchor": null
+    },
+    "temporary erectile dysfunction": {
+      "name": "Temporary erectile dysfunction",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Temporary erectile dysfunction",
+      "anchor": null
+    },
+    "vibrating vision": {
+      "name": "Vibrating vision",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Vibrating vision",
+      "anchor": null
+    },
+    "watery eyes": {
+      "name": "Watery eyes",
+      "category": "physical",
+      "subcategory": "bodily",
+      "target": "Watery eyes",
+      "anchor": null
+    },
+    "auditory acuity enhancement": {
+      "name": "Auditory acuity enhancement",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory acuity enhancement",
+      "anchor": null
+    },
+    "auditory acuity suppression": {
+      "name": "Auditory acuity suppression",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory acuity suppression",
+      "anchor": null
+    },
+    "auditory distortion": {
+      "name": "Auditory distortion",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory distortion",
+      "anchor": null
+    },
+    "auditory hallucination": {
+      "name": "Auditory hallucination",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory hallucination",
+      "anchor": null
+    },
+    "autonomous voice communication": {
+      "name": "Autonomous voice communication",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Autonomous voice communication",
+      "anchor": null
+    },
+    "external auditory hallucination": {
+      "name": "External auditory hallucination",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "External auditory hallucination",
+      "anchor": null
+    },
+    "internal auditory hallucination": {
+      "name": "Internal auditory hallucination",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory_hallucination",
+      "anchor": "Internal_auditory_hallucination"
+    },
+    "auditory misinterpretation": {
+      "name": "Auditory misinterpretation",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Auditory misinterpretation",
+      "anchor": null
+    },
+    "temporal scaling": {
+      "name": "Temporal scaling",
+      "category": "auditory",
+      "subcategory": "general",
+      "target": "Temporal scaling",
+      "anchor": null
+    },
+    "anticipatory response": {
+      "name": "Anticipatory response",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Anticipatory response",
+      "anchor": null
+    },
+    "component controllability": {
+      "name": "Component controllability",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Component controllability",
+      "anchor": null
+    },
+    "dosage independent intensity": {
+      "name": "Dosage independent intensity",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Dosage independent intensity",
+      "anchor": null
+    },
+    "machinescapes": {
+      "name": "Machinescapes",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Machinescapes",
+      "anchor": null
+    },
+    "memory replays": {
+      "name": "Memory replays",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Memory replays",
+      "anchor": null
+    },
+    "scenarios and plots": {
+      "name": "Scenarios and plots",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Scenarios and plots",
+      "anchor": null
+    },
+    "spatial disorientation": {
+      "name": "Spatial disorientation",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Spatial disorientation",
+      "anchor": null
+    },
+    "spontaneous physical movements": {
+      "name": "Spontaneous physical movements",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Spontaneous physical movements",
+      "anchor": null
+    },
+    "synaesthesia": {
+      "name": "Synaesthesia",
+      "category": "multisensory",
+      "subcategory": "general",
+      "target": "Synaesthesia",
+      "anchor": null
+    },
+    "ego dissolution": {
+      "name": "Ego dissolution",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Memory suppression",
+      "anchor": null
+    },
+    "existential self realization": {
+      "name": "Existential self-realization",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Existential self-realization",
+      "anchor": null
+    },
+    "identity alteration": {
+      "name": "Identity alteration",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Identity alteration",
+      "anchor": null
+    },
+    "perceived exposure to inner mechanics of consciousness": {
+      "name": "Perceived exposure to inner mechanics of consciousness",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Perceived exposure to inner mechanics of consciousness",
+      "anchor": null
+    },
+    "perception of eternalism": {
+      "name": "Perception of eternalism",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Perception of eternalism",
+      "anchor": null
+    },
+    "perception of interdependent opposites": {
+      "name": "Perception of interdependent opposites",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Perception of interdependent opposites",
+      "anchor": null
+    },
+    "perception of predeterminism": {
+      "name": "Perception of predeterminism",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Perception of predeterminism",
+      "anchor": null
+    },
+    "perception of self design": {
+      "name": "Perception of self-design",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Perception of self-design",
+      "anchor": null
+    },
+    "spirituality intensification": {
+      "name": "Spirituality intensification",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Spirituality intensification",
+      "anchor": null
+    },
+    "unity and interconnectedness": {
+      "name": "Unity and interconnectedness",
+      "category": "transpersonal",
+      "subcategory": "general",
+      "target": "Unity and interconnectedness",
+      "anchor": null
+    },
+    "cognitive disconnection": {
+      "name": "Cognitive disconnection",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Cognitive disconnection",
+      "anchor": null
+    },
+    "d j vu": {
+      "name": "Déjà vu",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Déjà vu",
+      "anchor": null
+    },
+    "detachment plateaus": {
+      "name": "Detachment plateaus",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Detachment plateaus",
+      "anchor": null
+    },
+    "physical disconnection": {
+      "name": "Physical disconnection",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Physical disconnection",
+      "anchor": null
+    },
+    "visual disconnection": {
+      "name": "Visual disconnection",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Visual disconnection",
+      "anchor": null
+    },
+    "holes spaces and voids": {
+      "name": "Holes, spaces and voids",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Visual_disconnection",
+      "anchor": "Holes.2C_spaces_and_voids"
+    },
+    "structures": {
+      "name": "Structures",
+      "category": "disconnective",
+      "subcategory": "general",
+      "target": "Visual_disconnection",
+      "anchor": "Structures"
+    },
+    "spontaneous bodily sensations": {
+      "name": "Spontaneous bodily sensations",
+      "category": "tactile",
+      "subcategory": "general",
+      "target": "Spontaneous bodily sensations",
+      "anchor": null
+    },
+    "tactile hallucination": {
+      "name": "Tactile hallucination",
+      "category": "tactile",
+      "subcategory": "general",
+      "target": "Tactile hallucination",
+      "anchor": null
+    },
+    "tactile intensification": {
+      "name": "Tactile intensification",
+      "category": "tactile",
+      "subcategory": "general",
+      "target": "Tactile intensification",
+      "anchor": null
+    },
+    "tactile suppression": {
+      "name": "Tactile suppression",
+      "category": "tactile",
+      "subcategory": "general",
+      "target": "Tactile suppression",
+      "anchor": null
+    },
+    "gustatory alteration": {
+      "name": "Gustatory alteration",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Gustatory alteration",
+      "anchor": null
+    },
+    "gustatory depression": {
+      "name": "Gustatory depression",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Gustatory depression",
+      "anchor": null
+    },
+    "gustatory hallucination": {
+      "name": "Gustatory hallucination",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Gustatory hallucination",
+      "anchor": null
+    },
+    "gustatory intensification": {
+      "name": "Gustatory intensification",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Gustatory intensification",
+      "anchor": null
+    },
+    "olfactory depression": {
+      "name": "Olfactory depression",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Olfactory depression",
+      "anchor": null
+    },
+    "olfactory hallucination": {
+      "name": "Olfactory hallucination",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Olfactory hallucination",
+      "anchor": null
+    },
+    "olfactory intensification": {
+      "name": "Olfactory intensification",
+      "category": "smell_taste",
+      "subcategory": "general",
+      "target": "Olfactory intensification",
+      "anchor": null
+    }
+  }
+}

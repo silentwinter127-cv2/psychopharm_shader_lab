@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+backups/
+
+# 本地调试产物
+browser_check.png
+*.log
