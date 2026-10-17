@@ -19,6 +19,9 @@
   assert(on.contextState === "running", "AudioContext 未运行: " + on.contextState);
   assert(on.profile && on.profile.active, "没有活动的听觉画像");
   assert(later.meter > 0.01, "音频分析器没有能量");
+  assert(on.params, "没有音频参数诊断");
+  assert(on.params.cutoff < 8000, "默认示例的低通未明显介入: " + (on.params && on.params.cutoff));
+  assert(on.params.wet > 0.25, "默认示例的延迟湿声过低: " + (on.params && on.params.wet));
   assert(status().errors.length === 0, "声音模拟产生运行时错误");
 
   return JSON.stringify({
@@ -26,6 +29,7 @@
     contextState: on.contextState,
     sourceName: on.sourceName,
     meter: later.meter,
+    params: on.params,
     profile: {
       clarity: on.profile.clarity,
       suppression: on.profile.suppression,

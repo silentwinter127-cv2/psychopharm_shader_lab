@@ -20,6 +20,7 @@ Dimensions (all normalized to 0..1):
 """
 from __future__ import annotations
 
+import math
 import re
 from typing import Any, Dict, List
 
@@ -188,7 +189,11 @@ def list_audio_profiles() -> List[Dict[str, Any]]:
 
 
 def compute_audio_uniforms(substance_effects: Dict[str, float]) -> Dict[str, Any]:
-    """Weight audio dimensions by current PK effect strength."""
+    """Mix audio dimensions by current PK effect strength.
+
+    Uses an energy-weighted RMS instead of a linear average. A strong effect from
+    one substance is therefore not washed out by a weak co-active substance.
+    """
     total = sum(max(0.0, float(value)) for value in (substance_effects or {}).values())
     if total <= 1e-9:
         return {
@@ -205,7 +210,9 @@ def compute_audio_uniforms(substance_effects: Dict[str, float]) -> Dict[str, Any
         if not profile or weight <= 1e-9:
             continue
         for key in AUDIO_KEYS:
-            accumulator[key] += profile["scores"].get(key, 0.0) * weight
+            value = profile["scores"].get(key, 0.0)
+            # 能量加权 RMS：比线性平均更保留个别物质的强效应，避免被低剂量成分稀释。
+            accumulator[key] += value * value * weight
         sources.append({
             "id": substance_id,
             "name": profile.get("name"),
@@ -213,7 +220,8 @@ def compute_audio_uniforms(substance_effects: Dict[str, float]) -> Dict[str, Any
             "auditory_effects": profile.get("auditory_effect_count", 0),
         })
 
-    result = {key: round(accumulator[key] / total, 3) for key in AUDIO_KEYS}
+    result = {key: round(math.sqrt(accumulator[key] / total), 3) for key in AUDIO_KEYS}
+    result["intensity"] = round(max(result[key] for key in AUDIO_KEYS if key != "intensity"), 3)
     result["active"] = bool(sources)
     result["sources"] = sources
     return result

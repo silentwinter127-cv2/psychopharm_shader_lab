@@ -492,7 +492,7 @@
       }
       const DEFAULT_INGESTIONS = [
         { id: "ing_1", substance_id: "lsd_25", roa: "sublingual", dose: 120, time_minutes: 0 },
-        { id: "ing_2", substance_id: "ketamine", roa: "insufflated", dose: 45, time_minutes: 150 }
+        { id: "ing_2", substance_id: "ketamine", roa: "insufflated", dose: 80, time_minutes: 150 }
       ];
 
       const $ = (id) => document.getElementById(id);
@@ -501,7 +501,7 @@
       let substances = {};
       let archives = [];
       let ingestions = DEFAULT_INGESTIONS.map((item) => ({ ...item }));
-      let currentTimeMinutes = 165;
+      let currentTimeMinutes = 180;
       let timelineDuration = 0;
       let timelineData = null;
       let lastSimulationState = null;
@@ -544,6 +544,7 @@
         enabled: false,
         volume: 0.55,
         profile: null,
+        lastParams: null,
         meter: 0,
         timeData: null
       };
@@ -1522,17 +1523,31 @@
         const partials = [
           [55, 0.18], [110, 0.10], [165, 0.06], [220, 0.04], [330, 0.025], [440, 0.015],
         ];
+        const pulsePeriod = 0.75;
         for (let channel = 0; channel < 2; channel += 1) {
           const data = buffer.getChannelData(channel);
           const phase = channel === 0 ? 0 : 1.7;
           for (let index = 0; index < length; index += 1) {
             const t = index / rate;
-            let value = 0;
+            let pad = 0;
             for (const [frequency, amplitude] of partials) {
-              value += amplitude * Math.sin(2 * Math.PI * frequency * t + phase * (frequency / 220));
+              pad += amplitude * Math.sin(2 * Math.PI * frequency * t + phase * (frequency / 220));
             }
             const breathe = 0.72 + 0.28 * Math.sin((2 * Math.PI * t) / seconds + phase);
-            data[index] = value * breathe * 0.8;
+            // 高频闪烁，让 clarity/high-shelf 有可作用的内容
+            const shimmer = 0.012 * Math.sin(2 * Math.PI * 880 * t + phase)
+              + 0.007 * Math.sin(2 * Math.PI * 1320 * t + phase * 1.3)
+              + 0.005 * Math.sin(2 * Math.PI * 1760 * t + phase * 0.7);
+            // 0.75 秒一次的软拨弦脉冲，让低通、失真与延迟听得见
+            const pulsePhase = t % pulsePeriod;
+            const pulseEnv = Math.exp(-pulsePhase * 9);
+            const pulse = pulseEnv * (
+              0.20 * Math.sin(2 * Math.PI * 220 * t + phase)
+              + 0.10 * Math.sin(2 * Math.PI * 440 * t + phase * 1.4)
+              + 0.05 * Math.sin(2 * Math.PI * 880 * t)
+              + 0.025 * Math.sin(2 * Math.PI * 1760 * t + phase)
+            );
+            data[index] = (pad * breathe * 0.9 + shimmer + pulse) * 0.8;
           }
         }
         return buffer;
@@ -1733,28 +1748,43 @@
           label.textContent = profile && profile.active
             ? `aud ${fmt2(profile.clarity)} · supp ${fmt2(profile.suppression)} · dist ${fmt2(profile.distortion)} · hall ${fmt2(profile.hallucination)}`
             : "no active auditory profile";
-          label.title = label.textContent;
+          const sources = profile && Array.isArray(profile.sources)
+            ? profile.sources.map((source) => `${source.name} ${fmt2(source.effect)}`).join(" + ")
+            : "";
+          label.title = sources ? `${label.textContent} · ${sources}` : label.textContent;
         }
         const graph = audioState.graph;
         if (!graph) return;
         const value = (key) => Math.max(0, Math.min(1, Number(profile && profile[key]) || 0));
         const now = graph.ctx.currentTime;
         const cutoff = clampNumber(
-          19000 - value("suppression") * 12000 - value("sedation") * 5500
-          - value("dissociation") * 2500 + value("clarity") * 1500,
-          500, 20000,
+          18000 * Math.pow(Math.max(
+            0.03,
+            1 - value("suppression") * 0.55 - value("sedation") * 0.42 - value("dissociation") * 0.55,
+          ), 1.7) + 250,
+          300, 20000,
         );
         graph.lowpass.frequency.setTargetAtTime(cutoff, now, 0.35);
-        graph.highShelf.gain.setTargetAtTime(value("clarity") * 9 - value("suppression") * 3 + value("arousal") * 2, now, 0.35);
-        graph.shaper.curve = graph.curves[Math.round(value("distortion") * 10)];
-        graph.delay.delayTime.setTargetAtTime(0.12 + value("time_warp") * 0.55, now, 0.35);
-        graph.feedback.gain.setTargetAtTime(0.05 + value("time_warp") * 0.52, now, 0.35);
-        graph.wet.gain.setTargetAtTime(0.05 + value("time_warp") * 0.45, now, 0.35);
-        graph.ghostGain.gain.setTargetAtTime(value("hallucination") * 0.055, now, 0.4);
+        graph.highShelf.gain.setTargetAtTime(value("clarity") * 12 - value("suppression") * 4 + value("arousal") * 3, now, 0.35);
+        graph.shaper.curve = graph.curves[Math.round(Math.min(1, value("distortion") * 1.15 + value("intensity") * 0.1) * 10)];
+        graph.delay.delayTime.setTargetAtTime(0.16 + value("time_warp") * 0.60, now, 0.35);
+        graph.feedback.gain.setTargetAtTime(0.08 + value("time_warp") * 0.55, now, 0.35);
+        graph.wet.gain.setTargetAtTime(0.12 + value("time_warp") * 0.55, now, 0.35);
+        const ghostLevel = value("hallucination") * 0.11 * (0.5 + 0.5 * value("intensity"));
+        graph.ghostGain.gain.setTargetAtTime(ghostLevel, now, 0.4);
         graph.ghost1.frequency.setTargetAtTime(180 + value("hallucination") * 90 + value("time_warp") * 20, now, 0.5);
         graph.ghost2.frequency.setTargetAtTime(270 + value("hallucination") * 140, now, 0.5);
         graph.ghostLfo.frequency.setTargetAtTime(0.05 + value("arousal") * 0.35, now, 0.5);
-        graph.tinnitusGain.gain.setTargetAtTime(value("tinnitus") * 0.018, now, 0.4);
+        graph.tinnitusGain.gain.setTargetAtTime(value("tinnitus") * 0.025, now, 0.4);
+        audioState.lastParams = {
+          cutoff: Math.round(cutoff),
+          highShelfDb: Number((value("clarity") * 12 - value("suppression") * 4 + value("arousal") * 3).toFixed(1)),
+          distortion: Number(Math.min(1, value("distortion") * 1.15 + value("intensity") * 0.1).toFixed(2)),
+          delaySeconds: Number((0.16 + value("time_warp") * 0.60).toFixed(2)),
+          wet: Number((0.12 + value("time_warp") * 0.55).toFixed(2)),
+          ghost: Number(ghostLevel.toFixed(3)),
+          tinnitus: Number((value("tinnitus") * 0.025).toFixed(3))
+        };
       }
 
       function updateAudioMeter() {
@@ -1774,7 +1804,7 @@
           sum += centered * centered;
         }
         const rms = Math.sqrt(sum / audioState.timeData.length);
-        const target = Math.min(1, rms * 2.4);
+        const target = Math.min(1, rms * 1.5);
         audioState.meter = audioState.meter * 0.82 + target * 0.18;
       }
 
@@ -3286,6 +3316,7 @@
               volume: audioState.volume,
               meter: Number(audioState.meter.toFixed(3)),
               contextState: audioState.ctx ? audioState.ctx.state : null,
+              params: audioState.lastParams,
               profile: audioState.profile
             },
             ingestions: ingestions.map((item) => ({ ...item })),

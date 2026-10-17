@@ -160,7 +160,7 @@ shaderLab.useTestPattern()            // 恢复内置测试源
 | GET | `/api/audio-profiles` | 25 种物质的启发式音频画像 |
 
 `POST /api/simulate` 的 `current_state` 同时返回 `shader_uniforms` 与
-`audio_uniforms`（10 维音频画像按当前药效加权混合）。
+`audio_uniforms`（10 维音频画像 + `intensity`，按当前药效做能量加权 RMS 混合）。
 
 示例：
 
@@ -168,9 +168,9 @@ shaderLab.useTestPattern()            // 恢复内置测试源
 {
   "ingestions": [
     {"id": "i1", "substance_id": "lsd_25", "roa": "sublingual", "dose": 120, "time_minutes": 0},
-    {"id": "i2", "substance_id": "ketamine", "roa": "insufflated", "dose": 45, "time_minutes": 150}
+    {"id": "i2", "substance_id": "ketamine", "roa": "insufflated", "dose": 80, "time_minutes": 150}
   ],
-  "current_time_minutes": 165,
+  "current_time_minutes": 180,
   "timeline_duration_minutes": 600
 }
 ```
@@ -292,7 +292,8 @@ notepad references\substance_effects.md
         → 耳鸣正弦 (tinnitus) ────────┘
 ```
 
-- 音频参数由 `/api/simulate` 返回的 `audio_uniforms` 按当前 PK 效应加权混合；
+- 音频参数由 `/api/simulate` 返回的 `audio_uniforms` 按当前 PK 效应做能量加权 RMS 混合，
+  以保留个别物质的强效应，避免被低剂量成分线性稀释；
 - `analyser` 的 RMS 能量 × `synaesthesia` 传入着色器 `u_audio_energy`，
   形成音频驱动的色相/亮度脉冲；
 - 声音默认关闭，点击“🔈 开启声音”后创建 `AudioContext`（浏览器手势策略）；
@@ -301,6 +302,11 @@ notepad references\substance_effects.md
 
 > 声音模拟只生成抽象 drone / 振荡器 / 滤波与延迟，不合成真实人声；
 > 音频画像为效应名启发式映射，不能预测个人实际听感，也不构成医疗建议。
+>
+> 默认示例为 **T+180 min / LSD 120μg + Ketamine 80mg（insufflated）**。
+> 内置环境音包含 0.75 秒一次的软拨弦脉冲与高频闪烁；如果只有持续低频 pad，
+> 低通、高架、失真和延迟会几乎听不出来。多物质混合使用能量加权 RMS，
+> 避免低剂量成分把强解离/幻听效应线性稀释。
 
 ---
 
