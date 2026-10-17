@@ -33,6 +33,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from app import APP_VERSION, app  # noqa: E402
 from archives import SUBSTANCE_DB  # noqa: E402
+from audio_profiles import AUDIO_PROFILES, compute_audio_uniforms  # noqa: E402
 from pk_pd_engine import IngestionEvent, PKPDEngine  # noqa: E402
 from reference_library import (  # noqa: E402
     ALLOWED_TAGS,
@@ -413,6 +414,50 @@ def main() -> int:
     check("GET /api/reference-taxonomy 返回 200", response.status_code == 200)
     if response.status_code == 200:
         check("分类树 API 返回类别", len(response.json().get("categories", [])) == 9)
+
+    # ------------------------------------------------------------------ #
+    section("9. 视听画像与声音模拟")
+    check("音频画像覆盖 25 种物质", len(AUDIO_PROFILES) == 25, str(len(AUDIO_PROFILES)))
+    dxm_profile = AUDIO_PROFILES.get("dxm")
+    check("DXM 音频画像存在", dxm_profile is not None)
+    if dxm_profile:
+        check("DXM 解离音效 >= 0.9", dxm_profile["scores"].get("dissociation", 0) >= 0.9, str(dxm_profile["scores"]))
+        check("DXM 听觉效应为 4 条", dxm_profile.get("auditory_effect_count") == 4, str(dxm_profile.get("auditory_effect_count")))
+        check("DXM 具备联觉耦合", dxm_profile["scores"].get("synaesthesia", 0) > 0, str(dxm_profile["scores"]))
+    invalid_audio = [
+        (sid, key, value)
+        for sid, profile in AUDIO_PROFILES.items()
+        for key, value in profile.get("scores", {}).items()
+        if not (0.0 <= float(value) <= 1.0)
+    ]
+    check("音频画像分数均在 [0,1]", not invalid_audio, str(invalid_audio[:5]))
+
+    mixed_audio = compute_audio_uniforms({"lsd_25": 0.5, "ketamine": 0.2})
+    check("混合音频状态为 active", mixed_audio.get("active") is True)
+    check("混合音频包含两个来源", len(mixed_audio.get("sources", [])) == 2, str(mixed_audio.get("sources")))
+    check("混合音频具有清晰度", mixed_audio.get("clarity", 0) > 0)
+    check("混合音频具有解离成分", mixed_audio.get("dissociation", 0) > 0.1, str(mixed_audio.get("dissociation")))
+    check("混合音频具有联觉成分", mixed_audio.get("synaesthesia", 0) > 0.1, str(mixed_audio.get("synaesthesia")))
+
+    response = client.get("/api/audio-profiles")
+    check("GET /api/audio-profiles 返回 200", response.status_code == 200, response.text[:200])
+    if response.status_code == 200:
+        audio_payload = response.json()
+        check("音频 API 返回 25 个画像", audio_payload.get("count") == 25, str(audio_payload.get("count")))
+
+    response = client.get("/api/references/dxm")
+    check("GET /api/references/dxm 返回 200", response.status_code == 200, response.text[:200])
+    if response.status_code == 200:
+        dxm_reference = response.json()
+        check("DXM 参考档案包含听觉画像", bool(dxm_reference.get("audio_profile")))
+        check("DXM 参考档案保留听觉效应", any(e.get("category") == "auditory" for e in dxm_reference.get("effects", [])))
+
+    response = client.post("/api/simulate", json=payload)
+    check("仿真响应包含 audio_uniforms", response.status_code == 200 and "audio_uniforms" in response.json().get("current_state", {}))
+    if response.status_code == 200:
+        audio_state = response.json()["current_state"]["audio_uniforms"]
+        check("仿真音频状态为 active", audio_state.get("active") is True)
+        check("仿真音频包含来源列表", len(audio_state.get("sources", [])) >= 1)
 
     # ------------------------------------------------------------------ #
     print("\n" + "=" * 62)

@@ -22,6 +22,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from archives import PHENOMENON_ARCHIVES, SUBSTANCE_DB
+from audio_profiles import (
+    compute_audio_uniforms,
+    get_audio_profile_for_reference,
+    list_audio_profiles,
+)
 from pk_pd_engine import IngestionEvent, PKPDEngine
 from reference_library import (
     REFERENCE_META,
@@ -32,7 +37,7 @@ from reference_library import (
     reference_count,
 )
 
-APP_VERSION = "1.3.0"
+APP_VERSION = "1.4.0"
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
@@ -76,6 +81,7 @@ async def health() -> Dict[str, Any]:
         "substances": len(SUBSTANCE_DB),
         "archives": len(PHENOMENON_ARCHIVES),
         "reference_substances": reference_count(),
+        "audio_profiles": len(list_audio_profiles()),
         "static_dir": str(STATIC_DIR),
     }
 
@@ -104,11 +110,26 @@ async def get_references() -> Dict[str, Any]:
             "substances": [],
             "taxonomy": {"effect_count": 0},
         }
+    summaries = list_reference_summaries()
+    for item in summaries:
+        item["audio_profile"] = get_audio_profile_for_reference(item.get("id"))
     return {
         "available": True,
         "meta": REFERENCE_META,
-        "substances": list_reference_summaries(),
+        "substances": summaries,
         "taxonomy": {"effect_count": get_taxonomy().get("effect_count", 0)},
+    }
+
+
+@app.get("/api/audio-profiles")
+async def get_audio_profiles() -> Dict[str, Any]:
+    """Substance → heuristic audio-effect profile, derived from the PW effect lists."""
+    profiles = list_audio_profiles()
+    return {
+        "count": len(profiles),
+        "license": "CC BY-SA 4.0",
+        "note": "Heuristic mapping from reported auditory effects to Web Audio parameters; not a clinical measure.",
+        "profiles": profiles,
     }
 
 
@@ -118,7 +139,7 @@ async def get_reference_detail(substance_id: str) -> Dict[str, Any]:
     item = get_reference(substance_id)
     if item is None:
         raise HTTPException(status_code=404, detail=f"参考档案中不存在物质: {substance_id}")
-    return item
+    return {**item, "audio_profile": get_audio_profile_for_reference(substance_id)}
 
 
 @app.get("/api/reference-taxonomy")
@@ -131,6 +152,7 @@ async def get_reference_taxonomy() -> Dict[str, Any]:
 async def simulate_pk_pd(req: SimulationRequest) -> Dict[str, Any]:
     """根据摄入记录计算时间轴曲线与当前时刻的 GLSL 着色器参数。"""
     current_state = PKPDEngine.evaluate_at_time(req.ingestions, req.current_time_minutes)
+    current_state["audio_uniforms"] = compute_audio_uniforms(current_state.get("substance_effects", {}))
     timeline = PKPDEngine.simulate_timeline_series(
         req.ingestions,
         duration_minutes=req.timeline_duration_minutes,

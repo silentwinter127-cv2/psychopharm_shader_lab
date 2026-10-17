@@ -4,6 +4,7 @@
 
 - **后端**：FastAPI + Pydantic，负责摄入事件 → 血药/效应包络 → Hill 方程 → 受体负载 → 协同矩阵 → GLSL uniform 参数。
 - **前端**：原生 WebGL2 双缓冲 ping-pong 渲染管线，把 6 组 / 14 个视觉现象学算子实时映射到画面上（含空间立体主义、漩涡隧道、Voronoi 碎片化）。
+- **视听模拟**：Web Audio 环境音 / 上传音频，经听觉画像驱动的滤波、失真、延迟、幽灵音与耳鸣处理，并用音频能量调制画面。
 - **参考集**：从 PsychonautWiki 整理的 25 种物质 / 1,619 条主观效应记录，可独立浏览或供 API 查询。
 - **可模拟物质**：25 种物质、8 类受体与多组别协同（5-HT2A / NMDA / SERT / D2 / DA-NE / CB1 / KOR / GABA）。
 - **无构建步骤**：前端不需要打包器，Tailwind 运行时已本地化，离线可用。
@@ -58,28 +59,33 @@ psychopharm_shader_lab/
 ├─ pk_pd_engine.py           # PK-PD 模型：包络、Hill、协同、uniform 映射
 ├─ archives.py               # 物质药理数据库 + 视觉现象学档案
 ├─ reference_library.py      # PsychonautWiki 效应参考集加载层
+├─ audio_profiles.py         # 视听效应画像 + 音频参数混合
 ├─ requirements.txt          # 运行时依赖
 ├─ requirements-dev.txt      # 自检依赖（httpx）
-├─ selftest.py               # 后端 / API / 模型 / 参考集自检（251 项）
+├─ selftest.py               # 后端 / API / 模型 / 参考集自检（270 项）
 ├─ references/               # PsychonautWiki 物质 × 主观效应参考集
 │  ├─ substance_effects.json # 结构化参考数据
 │  ├─ substance_effects.md   # 人读版参考集
 │  ├─ effect_taxonomy.json   # SEI 效应分类树
 │  ├─ effect_taxonomy.md     # 人读版分类树
+│  ├─ audiovisual_profiles.md # 视听效应画像表
 │  └─ README.md              # 方法 / 许可 / 限制
 ├─ static/
-│  ├─ index.html             # 单页 UI + WebGL2 着色器 + 交互逻辑
+│  ├─ index.html             # 单页 UI + WebGL2 + Web Audio
 │  └─ vendor/
 │     └─ tailwindcss-3.4.17.js  # 本地化的 Tailwind 运行时
 ├─ tools/
 │  ├─ browser_check.mjs      # 无依赖的 Chrome DevTools 冒烟测试（可选）
 │  ├─ ui_flow_check.js       # 交互 / 缩放 / 上下文恢复回归脚本（可选）
 │  ├─ webcam_check.js        # 摄像头链路回归脚本（虚拟摄像头，可选）
-│  └─ build_effect_reference.py  # 参考集构建脚本（PsychonautWiki API）
+│  ├─ audio_check.js         # Web Audio 声音模拟回归脚本
+│  ├─ build_effect_reference.py  # 参考集构建脚本（PsychonautWiki API）
+│  └─ build_audiovisual_report.py # 视听画像表生成
 └─ docs/
    ├─ screenshot.png         # 主界面截图
-   ├─ screenshot-cubism.png  # 空间立体主义示例
-   ├─ screenshot-reference.png  # 效应参考集浏览器截图
+   ├─ screenshot-cubism.png  # 空间立体主义效果
+   ├─ screenshot-audio.png   # 声音模拟控制条
+   ├─ screenshot-reference.png  # 效应参考集 / 听觉画像
    ├─ screenshot-video.png   # 视频时间映射面板
    └─ screenshot-export.png  # 导出面板
 ```
@@ -122,6 +128,12 @@ $env:BROWSER_FAKE_MEDIA = "1"
 node tools/browser_check.mjs http://127.0.0.1:8000/ webcam.png @tools/webcam_check.js
 ```
 
+声音模拟链路（AudioContext → 滤波/失真/延迟 → analyser → 着色器）：
+
+```powershell
+node tools/browser_check.mjs http://127.0.0.1:8000/ audio.png @tools/audio_check.js
+```
+
 移动端布局可用 `$env:BROWSER_WINDOW = "500,900"` 设置窗口尺寸。
 
 `window.shaderLab` 还提供了控制台调试入口：
@@ -143,10 +155,14 @@ shaderLab.useTestPattern()            // 恢复内置测试源
 | GET | `/api/metadata` | 全部物质档案 + 现象学档案 |
 | POST | `/api/simulate` | 计算当前状态与整条时间轴 |
 | GET | `/api/references` | 25 个参考物质的轻量摘要 |
-| GET | `/api/references/{id}` | 单个物质的完整效应档案 |
+| GET | `/api/references/{id}` | 单个物质的完整效应档案（含听觉画像） |
 | GET | `/api/reference-taxonomy` | PsychonautWiki SEI 效应分类树 |
+| GET | `/api/audio-profiles` | 25 种物质的启发式音频画像 |
 
-`POST /api/simulate` 示例：
+`POST /api/simulate` 的 `current_state` 同时返回 `shader_uniforms` 与
+`audio_uniforms`（10 维音频画像按当前药效加权混合）。
+
+示例：
 
 ```json
 {
@@ -218,18 +234,73 @@ notepad references\substance_effects.md
 | 06 | `vortex` | 极坐标扭转 + 径向缩放 + 旋转色带，形成隧道/吸入感 | 几何递归、视觉解离、光流/隧道错觉 |
 | 06 | `shatter` | Worley/Voronoi 细胞分解 + 逐碎片 UV 位移 + 裂隙发光 | 纹理液化、视觉解离、碎片化空间 |
 
-- 右侧算子面板新增 **06 · Cubism & Spatial Fracture** 分组与三条滑块；
-- 画布右上角新增 **“空间立体主义 ▶”** 一键示例，自动打开手动覆盖并设置
-  `cubism=0.85 / vortex=0.35 / shatter=0.55`；
+- 右侧算子面板新增 **06 · Cubism & Spatial Fracture** 分组与三条滑块，手动调节
+  `cubism / vortex / shatter`；不再提供画布快捷示例按钮；
 - 后端 `archives.py` 新增 3 条现象学档案（`cubist_recomposition`、`vortex_tunnel`、
   `voronoi_shatter`），描述证据、机制假设与算子栈；
 - PK-PD 映射：新增权重由既有“边界解构 / 图案密度 / 对称阶数 / 时间反馈”维度派生，
   并在 5-HT2A×NMDA、5-HT2A×SERT、5-HT2A×CB1、KOR 协同中额外增益；
 - 全部 25 种物质自动获得这三个新权重，无需手工逐个补数据。
 
-![空间立体主义示例](docs/screenshot-cubism.png)
+![空间立体主义效果](docs/screenshot-cubism.png)
 
 > 立体主义/漩涡/碎片化是艺术化几何转译，不是对真实空间知觉的临床模拟。
+
+---
+
+## 视听模拟：从 PW 效应到 Web Audio
+
+参考集不仅包含视觉效应，也包含各物质的**听觉 / 多感官效应**。`audio_profiles.py`
+把这些效应名映射为 10 个音频维度 + 总体强度 `intensity`（启发式 0–1，不是心理声学测量）：
+
+| 维度 | 对应 PW 效应示例 |
+| --- | --- |
+| `clarity` | Auditory acuity enhancement、Increased music appreciation |
+| `suppression` | Auditory acuity suppression、Auditory suppression |
+| `distortion` | Auditory distortion、Auditory misinterpretation |
+| `hallucination` | Auditory hallucination、Autonomous voice communication |
+| `tinnitus` | Tinnitus |
+| `synaesthesia` | Synaesthesia（音频 → 视觉耦合强度） |
+| `time_warp` | Time distortion、Temporal scaling、Recursion |
+| `dissociation` | Visual / cognitive / physical disconnection、Derealization |
+| `arousal` | Stimulation、Wakefulness |
+| `sedation` | Sedation、Sleepiness、Muscle relaxation |
+
+生成的 25 种物质画像见
+[references/audiovisual_profiles.md](references/audiovisual_profiles.md)，也可通过
+`GET /api/audio-profiles` 获取。
+
+以 **DXM** 为例（对应你提供的 PW 视觉 / 听觉截图）：25 条视觉效应、4 条听觉效应，
+画像为 `dissociation 1.00`、`sedation 0.75`、`clarity 0.55`、`synaesthesia 0.35`，
+因此在 Web Audio 中会明显低通、变闷、加入解离延迟与轻微幽灵音，同时音频能量会调制
+画面的色相/明度。
+
+![声音模拟控制条](docs/screenshot-audio.png)
+
+### 音频链路
+
+```text
+内置环境音 / 上传音频
+        │
+        ▼
+ inputGain → lowpass (suppression/sedation/dissociation)
+        → highShelf (clarity/arousal)
+        → WaveShaper (distortion)
+        → dry ────────────────┐
+        → delay ↔ feedback ───┤→ outputGain → analyser → 扬声器
+        → 幽灵振荡器 (hallucination) ─┤        └→ MediaStreamDestination (WebM)
+        → 耳鸣正弦 (tinnitus) ────────┘
+```
+
+- 音频参数由 `/api/simulate` 返回的 `audio_uniforms` 按当前 PK 效应加权混合；
+- `analyser` 的 RMS 能量 × `synaesthesia` 传入着色器 `u_audio_energy`，
+  形成音频驱动的色相/亮度脉冲；
+- 声音默认关闭，点击“🔈 开启声音”后创建 `AudioContext`（浏览器手势策略）；
+- “环境音”使用程序化 12 秒无缝循环 pad；也可上传本地音频循环播放；
+- WebM 录制在声音模拟开启时会自动混入音频轨。
+
+> 声音模拟只生成抽象 drone / 振荡器 / 滤波与延迟，不合成真实人声；
+> 音频画像为效应名启发式映射，不能预测个人实际听感，也不构成医疗建议。
 
 ---
 
@@ -264,7 +335,7 @@ T      = t0 + (videoT − v0) × (t1 − t0) / (v1 − v0)
 | JSON | 摄入记录、uniform、视频映射参数 | 预设导出 |
 
 录制可以自动播放：视频驱动模式会播放导入视频，时间轴模式会启动“自动演化”。
-WebM 不含音轨；录制分辨率等于 WebGL 画布缓冲区（DPR 上限 2）。
+WebM 在声音模拟开启时包含 Web Audio 音轨；关闭时只有视频轨。录制分辨率等于 WebGL 画布缓冲区（DPR 上限 2）。
 
 > WebM 录制建议使用 Chrome / Edge；Safari 对 `canvas.captureStream()` 与 VP9 的支持有限。
 > 视频导入依赖浏览器解码器（H.264 / VP8 / VP9 等），不支持的文件会给出错误提示。
@@ -285,9 +356,12 @@ WebM 不含音轨；录制分辨率等于 WebGL 画布缓冲区（DPR 上限 2�
   预设 JSON（含视频映射）。
 - **25 物质数据层**：保留 25 种物质与 8 类受体，并在健壮引擎中合并 CB1 / KOR / GABA 协同；
   新增 `scenery_slice`、`diplopia_offset` 两个视觉算子与滑块。
-- **空间立体主义算子组**：新增 `cubism` / `vortex` / `shatter` 三个 uniform、3 条滑块、
-  画布快捷示例与 3 条现象学档案；全部 25 种物质自动获得派生权重。
-- **参考集浏览器**：25 种物质、1,619 条效应、242 条 SEI 分类；支持搜索与按 10 类效应浏览。
+- **空间立体主义算子组**：新增 `cubism` / `vortex` / `shatter` 三个 uniform、3 条滑块
+  与 3 条现象学档案；全部 25 种物质自动获得派生权重。
+- **参考集浏览器**：25 种物质、1,619 条效应、242 条 SEI 分类；支持搜索、按 10 类效应浏览与听觉画像。
+- **视听模拟层**：从 PW 听觉效应派生 10 维音频画像；Web Audio 环境音/上传音频、
+  滤波/失真/延迟/幽灵音/耳鸣，音频能量驱动着色器；WebM 可混入音轨。
+- **视听画像报告**：`references/audiovisual_profiles.md` 汇总 25 种物质的视觉/听觉效应与音频维度。
 
 > 并行版本说明：调试期间检测到另一个会话覆盖过 `app.py`、`archives.py` 与
 > `index.html`；当前交付版本采用“健壮后端 + 25 物质数据 + 视频/导出/参考集 UI”的组合。
@@ -332,7 +406,7 @@ WebM 不含音轨；录制分辨率等于 WebGL 画布缓冲区（DPR 上限 2�
 
 - 后端新增 `/api/health`、请求字段边界、`--host/--port/--reload` 参数。
 - 新增 `/api/references`、`/api/references/{id}`、`/api/reference-taxonomy` 与效应参考集浏览器。
-- `selftest.py` 覆盖 251 项检查；`tools/browser_check.mjs` 可在无头 Chrome 中验证 WebGL 与截图。
+- `selftest.py` 覆盖 270 项检查；`tools/browser_check.mjs` 可在无头 Chrome 中验证 WebGL 与截图。
 - `tools/build_effect_reference.py` 可从 PsychonautWiki MediaWiki API 重新构建参考集。
 - Tailwind 运行时本地化到 `static/vendor/`，断网也能正确显示界面。
 

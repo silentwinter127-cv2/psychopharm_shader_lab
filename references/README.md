@@ -23,6 +23,7 @@
 | `substance_effects.md` | 人读版参考集：总览表 + 每种物质的分类效应清单 |
 | `effect_taxonomy.json` | SEI 效应分类树 + 构建期使用的名称索引 |
 | `effect_taxonomy.md` | 人读版分类树 |
+| `audiovisual_profiles.md` | 25 种物质的视觉 / 听觉效应计数与音频画像 |
 | `README.md` | 本文件：方法、许可、限制 |
 
 ---
@@ -182,10 +183,15 @@ HTTP API：
 | --- | --- | --- |
 | GET | `/api/references` | 25 个物质的摘要 + 元数据 |
 | GET | `/api/references/{id}` | 单个物质的完整效应档案 |
+| GET | `/api/references/{id}` | 单个物质的完整效应档案（含听觉画像） |
 | GET | `/api/reference-taxonomy` | SEI 效应分类树 |
+| GET | `/api/audio-profiles` | 25 种物质的启发式音频画像 |
 
 前端页面顶部新增“效应参考集”按钮，按物质浏览分类效应；效应名悬停可查看 PW 的简短描述，
 虚线标签表示该效应未收录于 SEI 分类树。参考集不参与 PK-PD 数值计算，只是独立的检索 / 对照层。
+
+每个参考条目还会附带 `audio_profile`（`audio_profiles.py` 生成），把听觉 / 多感官效应
+映射为 10 维音频参数；完整表格见 [audiovisual_profiles.md](audiovisual_profiles.md)。
 
 > 项目后来新增了 06–08 三个几何算子（`cubism` / `vortex` / `shatter`），由 `archives.py`
 > 与着色器独立定义；本参考集仍使用 5 类核心标签，不强行改写已有 SEI 分类与主标签排序。
@@ -214,5 +220,6 @@ PsychonautWiki 的内容采用
   大于“唯一效应名”数量。
 - 解析依赖页面模板结构；PsychonautWiki 页面改版后需要重新运行构建脚本。
 - 少量效应名未收录于 SEI 分类树（如 `Neurogenesis`、`Neurotoxicity`），以 `in_sei: false` 保留。
+- `LSA` 当前不在参考快照中，音频画像使用 LSD ×0.8 作为回退并标记 `fallback`。
 - `strength` 为启发式标签强度，不能用于比较不同物质之间的药效强弱。
 - 本参考集有意不包含剂量、给药操作、合成或获取信息。

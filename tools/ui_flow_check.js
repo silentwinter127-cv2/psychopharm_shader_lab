@@ -125,18 +125,27 @@
     results.contextLoss = "WEBGL_lose_context 不可用，跳过";
   }
 
-  // 8) 空间立体主义示例
-  document.getElementById("btn-cubism-demo").click();
-  await sleep(700);
+  // 8) 立体主义 / 漩涡 / 碎片化滑块
+  const cubismSlider = document.querySelector('[data-param="cubism"]');
+  const vortexSlider = document.querySelector('[data-param="vortex"]');
+  const shatterSlider = document.querySelector('[data-param="shatter"]');
+  cubismSlider.value = "0.85";
+  cubismSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  vortexSlider.value = "0.35";
+  vortexSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  shatterSlider.value = "0.55";
+  shatterSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  await sleep(250);
   results.cubism = {
     checked: document.getElementById("chk-manual").checked,
     cubism: status().uniforms.cubism,
+    vortex: status().uniforms.vortex,
     shatter: status().uniforms.shatter,
     hud: document.getElementById("hud-extra").textContent
   };
-  assert(results.cubism.checked, "立体主义示例未开启手动覆盖");
-  assert(Math.abs(results.cubism.cubism - 0.85) < 0.001, "立体主义示例未设置 cubism=0.85");
-  assert(results.cubism.shatter > 0.5, "立体主义示例未设置碎片化");
+  assert(results.cubism.checked, "立体主义滑块未开启手动覆盖");
+  assert(Math.abs(results.cubism.cubism - 0.85) < 0.001, "cubism 滑块未生效");
+  assert(Math.abs(results.cubism.shatter - 0.55) < 0.001, "shatter 滑块未生效");
   assert(results.cubism.hud.includes("cub:0.85"), "HUD 未显示立体主义参数");
 
   // 9) 新增现象学档案
@@ -145,12 +154,16 @@
   archiveSelect.value = "5";
   archiveSelect.dispatchEvent(new Event("change", { bubbles: true }));
   await sleep(250);
+  const archiveText = document.getElementById("archive-detail").textContent.replace(/\s+/g, " ");
+  const selectedArchiveText = archiveSelect.options[Number(archiveSelect.value)]?.textContent || "";
   results.archive = {
     count: archiveCount,
-    text: document.getElementById("archive-detail").textContent.replace(/\s+/g, " ").slice(0, 120)
+    selected: selectedArchiveText,
+    text: archiveText.slice(0, 120)
   };
   assert(results.archive.count === 8, "现象学档案数量不是 8");
-  assert(results.archive.text.includes("立体主义"), "新增空间立体主义档案未显示");
+  assert(selectedArchiveText.includes("空间立体主义"), "新增空间立体主义档案未被选中");
+  assert(archiveText.includes("立体主义"), "新增空间立体主义档案未显示");
 
   // 10) 参考集浏览器
   document.getElementById("btn-reference").click();

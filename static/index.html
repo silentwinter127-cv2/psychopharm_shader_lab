@@ -132,7 +132,6 @@
     <section class="order-2 lg:col-span-5 flex flex-col gap-3 lg:min-h-0">
       <div class="glass rounded-xl p-2 flex-1 flex flex-col relative overflow-hidden min-h-[340px]">
         <canvas id="gl-canvas" width="720" height="540" class="w-full h-full object-contain rounded-lg bg-black"></canvas>
-        <button id="btn-cubism-demo" class="absolute right-4 top-4 z-10 rounded-lg border border-rose-500/40 bg-black/65 px-2.5 py-1 text-[10px] text-rose-200 backdrop-blur hover:bg-rose-600/30">空间立体主义 ▶</button>
         <!-- 左上角实时 HUD -->
         <div class="absolute top-4 left-4 bg-black/70 backdrop-blur px-3 py-2 rounded-lg border border-white/10 text-[11px] font-mono space-y-0.5 pointer-events-none">
           <div class="text-purple-300 font-semibold" id="hud-mode">MODE: PK-PD DRIVEN</div>
@@ -143,6 +142,19 @@
         </div>
         <!-- WebGL 失败提示 -->
         <div id="gl-error" class="hidden absolute inset-0 z-10 flex items-center justify-center bg-black/85 p-6 text-center text-xs leading-relaxed text-rose-300"></div>
+      </div>
+
+      <!-- 声音模拟控制条 -->
+      <div class="glass flex shrink-0 flex-wrap items-center gap-2 rounded-xl px-3 py-2 text-[11px]">
+        <button id="btn-audio-toggle" class="rounded border border-cyan-500/40 bg-cyan-600/20 px-2 py-1 text-cyan-200 hover:bg-cyan-600/35">🔈 开启声音</button>
+        <label class="flex items-center gap-1 text-slate-400">音量
+          <input id="audio-volume" type="range" min="0" max="1" step="0.01" value="0.55" class="w-16 accent-cyan-400" aria-label="声音音量" />
+        </label>
+        <button id="btn-audio-ambient" class="rounded border border-white/10 bg-white/5 px-2 py-1 text-slate-300 hover:bg-white/10">环境音</button>
+        <button id="btn-audio-upload" class="rounded border border-white/10 bg-white/5 px-2 py-1 text-slate-300 hover:bg-white/10">上传音频</button>
+        <input id="audio-file" type="file" accept="audio/*" class="hidden" />
+        <span id="audio-status" class="truncate text-slate-500">声音关闭 · 内置环境音</span>
+        <span id="audio-profile" class="ml-auto hidden max-w-[48%] truncate font-mono text-cyan-400/70 sm:inline"></span>
       </div>
 
       <!-- 结构化体验档案抽屉 (对应文档第三节) -->
@@ -241,7 +253,6 @@
           <div class="p-2.5 rounded-lg bg-white/[0.03] border border-rose-500/20 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div class="font-semibold text-rose-300">06 · Cubism &amp; Spatial Fracture</div>
-              <button id="btn-preset-cubism" class="rounded border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 text-[10px] text-rose-200 hover:bg-rose-500/20">示例</button>
             </div>
             <div>
               <div class="flex justify-between"><span>空间立体主义 (Cubist Facets)</span><span id="lbl-cubism" class="font-mono">0.00</span></div>
@@ -418,7 +429,7 @@
 
         <p class="text-[10px] leading-relaxed text-slate-500">
           PNG 使用 WebGL <code>readPixels</code> 读取当前屏幕输出；WebM 使用 <code>canvas.captureStream()</code> +
-          <code>MediaRecorder</code> 录制，音轨为空。
+          <code>MediaRecorder</code> 录制；声音模拟开启时会混入 Web Audio 音轨。
         </p>
       </div>
     </div>
@@ -438,7 +449,7 @@
       "use strict";
 
       // ==================== 常量 ====================
-      const APP_VERSION = "1.3.0";
+      const APP_VERSION = "1.4.0";
       const MAX_TIMELINE_MINUTES = 1440;
       const GL_DPR_CAP = 2;
       const SUB_COLORS = {
@@ -522,6 +533,21 @@
         shatter: 0.0
       };
 
+      const audioState = {
+        ctx: null,
+        graph: null,
+        source: null,
+        sourceName: "内置环境音",
+        ambientBuffer: null,
+        fileBuffer: null,
+        fileName: "",
+        enabled: false,
+        volume: 0.55,
+        profile: null,
+        meter: 0,
+        timeData: null
+      };
+
       const runtime = {
         ready: false,
         contextLost: false,
@@ -563,6 +589,8 @@
       uniform float u_cubism;
       uniform float u_vortex;
       uniform float u_shatter;
+      uniform float u_audio_energy;
+      uniform float u_synaesthesia;
 
       // 2D 梯度噪声
       vec2 hash2(vec2 p) {
@@ -768,6 +796,16 @@
           hsv.x = fract(hsv.x + u_hue_shift * 0.5 + sin(u_time * 0.4 + length(uv - 0.5) * 4.0) * u_hue_shift * 0.2);
           hsv.y = clamp(hsv.y * (1.0 + u_hue_shift * 0.7), 0.0, 1.0);
           col = hsv2rgb(hsv);
+        }
+
+        // [音频联觉] 分析器能量 × 联觉画像 → 色相/明度脉冲
+        float audioPulse = u_audio_energy * (0.18 + 0.82 * u_synaesthesia);
+        if (audioPulse > 0.001) {
+          vec3 audioHSV = rgb2hsv(col);
+          audioHSV.x = fract(audioHSV.x + audioPulse * 0.035 * sin(u_time * 2.3));
+          audioHSV.y = clamp(audioHSV.y + audioPulse * 0.10, 0.0, 1.0);
+          audioHSV.z = clamp(audioHSV.z + audioPulse * 0.06, 0.0, 1.0);
+          col = hsv2rgb(audioHSV);
         }
 
         // [04] 视觉残留与时间叠影 (Ping-Pong Temporal Persistence)
@@ -1143,6 +1181,7 @@
         $("val-nmda").textContent = fmt2(receptors["NMDA_antag"]);
         $("val-sert").textContent = fmt2(receptors["SERT"]);
         $("val-synergy").textContent = fmt2(state.synergy_index);
+        applyAudioUniforms(state.audio_uniforms);
 
         if (!manualOverride) {
           activeUniforms = { ...state.shader_uniforms };
@@ -1178,31 +1217,6 @@
           `rgb:${fmt2(activeUniforms.rgb_displacement)} | trail:${fmt2(activeUniforms.feedback_decay)}`;
         $("hud-extra").textContent =
           `cub:${fmt2(activeUniforms.cubism)} | vortex:${fmt2(activeUniforms.vortex)} | shatter:${fmt2(activeUniforms.shatter)}`;
-      }
-
-      function applyCubismPreset() {
-        if (videoState.active && videoState.mode === "video") setVideoMode("timeline");
-        manualOverride = true;
-        $("chk-manual").checked = true;
-        Object.assign(activeUniforms, {
-          cubism: 0.85,
-          vortex: 0.35,
-          shatter: 0.55,
-          edge_reorg: 0.45,
-          pattern_density: 0.55,
-          symmetry_order: 6,
-          warp_amplitude: 0.35,
-          warp_frequency: 2.4,
-          rgb_displacement: 0.45,
-          hue_shift: 0.25,
-          feedback_decay: 0.35,
-          analog_glitch: 0.25,
-          scenery_slice: 0.25,
-          diplopia_offset: 0.2
-        });
-        syncSlidersFromUniforms();
-        updateHUD();
-        showToast("已载入空间立体主义示例 (Cubism · Vortex · Shatter)", "success", 2600);
       }
 
       // ==================== 2D 曲线图（DPR 感知） ====================
@@ -1380,7 +1394,7 @@
           "u_source", "u_prevFrame", "u_resolution", "u_time", "u_warp_amp", "u_warp_freq",
           "u_sym_order", "u_pattern_density", "u_rgb_disp", "u_hue_shift",
           "u_feedback_decay", "u_edge_reorg", "u_scenery_slice", "u_diplopia_offset",
-          "u_cubism", "u_vortex", "u_shatter"
+          "u_cubism", "u_vortex", "u_shatter", "u_audio_energy", "u_synaesthesia"
         ]);
         screenUniforms = cacheUniforms(screenProgram, ["u_tex", "u_resolution", "u_time", "u_glitch"]);
 
@@ -1488,6 +1502,282 @@
       }
 
       // ==================== 渲染循环 ====================
+      // ==================== Web Audio 声音模拟 ====================
+      function makeDistortionCurve(amount) {
+        const samples = 1024;
+        const curve = new Float32Array(samples);
+        const k = Math.max(0, amount) * 90;
+        for (let index = 0; index < samples; index += 1) {
+          const x = (index * 2) / samples - 1;
+          curve[index] = ((1 + k) * x) / (1 + k * Math.abs(x));
+        }
+        return curve;
+      }
+
+      function createAmbientBuffer(ctx) {
+        const seconds = 12;
+        const rate = ctx.sampleRate;
+        const length = Math.floor(rate * seconds);
+        const buffer = ctx.createBuffer(2, length, rate);
+        const partials = [
+          [55, 0.18], [110, 0.10], [165, 0.06], [220, 0.04], [330, 0.025], [440, 0.015],
+        ];
+        for (let channel = 0; channel < 2; channel += 1) {
+          const data = buffer.getChannelData(channel);
+          const phase = channel === 0 ? 0 : 1.7;
+          for (let index = 0; index < length; index += 1) {
+            const t = index / rate;
+            let value = 0;
+            for (const [frequency, amplitude] of partials) {
+              value += amplitude * Math.sin(2 * Math.PI * frequency * t + phase * (frequency / 220));
+            }
+            const breathe = 0.72 + 0.28 * Math.sin((2 * Math.PI * t) / seconds + phase);
+            data[index] = value * breathe * 0.8;
+          }
+        }
+        return buffer;
+      }
+
+      function ensureAudioGraph() {
+        if (audioState.graph) return audioState.graph;
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtor) throw new Error("当前浏览器不支持 Web Audio API");
+
+        const ctx = new AudioCtor();
+        const input = ctx.createGain();
+        input.gain.value = 0.8;
+
+        const lowpass = ctx.createBiquadFilter();
+        lowpass.type = "lowpass";
+        lowpass.frequency.value = 18000;
+        lowpass.Q.value = 0.7;
+
+        const highShelf = ctx.createBiquadFilter();
+        highShelf.type = "highshelf";
+        highShelf.frequency.value = 3200;
+        highShelf.gain.value = 0;
+
+        const shaper = ctx.createWaveShaper();
+        shaper.oversample = "2x";
+        shaper.curve = makeDistortionCurve(0);
+
+        const dry = ctx.createGain();
+        dry.gain.value = 1;
+
+        const delay = ctx.createDelay(1.5);
+        delay.delayTime.value = 0.16;
+
+        const feedback = ctx.createGain();
+        feedback.gain.value = 0.08;
+
+        const wet = ctx.createGain();
+        wet.gain.value = 0.08;
+
+        const output = ctx.createGain();
+        output.gain.value = 0;
+
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.8;
+
+        const mediaDest = ctx.createMediaStreamDestination();
+
+        const tinnitus = ctx.createOscillator();
+        tinnitus.type = "sine";
+        tinnitus.frequency.value = 6200;
+        const tinnitusGain = ctx.createGain();
+        tinnitusGain.gain.value = 0;
+
+        const ghostGain = ctx.createGain();
+        ghostGain.gain.value = 0;
+        const ghost1 = ctx.createOscillator();
+        ghost1.type = "sine";
+        ghost1.frequency.value = 196;
+        const ghost2 = ctx.createOscillator();
+        ghost2.type = "triangle";
+        ghost2.frequency.value = 294;
+        const ghostLfo = ctx.createOscillator();
+        ghostLfo.type = "sine";
+        ghostLfo.frequency.value = 0.07;
+        const ghostLfoGain = ctx.createGain();
+        ghostLfoGain.gain.value = 3.5;
+
+        input.connect(lowpass);
+        lowpass.connect(highShelf);
+        highShelf.connect(shaper);
+        shaper.connect(dry);
+        dry.connect(output);
+        shaper.connect(delay);
+        delay.connect(wet);
+        wet.connect(output);
+        delay.connect(feedback);
+        feedback.connect(delay);
+        tinnitus.connect(tinnitusGain);
+        tinnitusGain.connect(output);
+        ghost1.connect(ghostGain);
+        ghost2.connect(ghostGain);
+        ghostGain.connect(output);
+        ghostLfo.connect(ghostLfoGain);
+        ghostLfoGain.connect(ghost1.detune);
+        ghostLfoGain.connect(ghost2.detune);
+        output.connect(analyser);
+        analyser.connect(ctx.destination);
+        output.connect(mediaDest);
+
+        tinnitus.start();
+        ghost1.start();
+        ghost2.start();
+        ghostLfo.start();
+
+        audioState.ctx = ctx;
+        audioState.timeData = new Uint8Array(analyser.fftSize);
+        audioState.graph = {
+          ctx, input, lowpass, highShelf, shaper, dry, delay, feedback, wet, output,
+          analyser, mediaDest, tinnitus, tinnitusGain, ghost1, ghost2, ghostGain,
+          ghostLfo, ghostLfoGain,
+          curves: Array.from({ length: 11 }, (_, index) => makeDistortionCurve(index / 10))
+        };
+        return audioState.graph;
+      }
+
+      function updateAudioUI() {
+        const button = $("btn-audio-toggle");
+        if (button) button.textContent = audioState.enabled ? "⏸ 关闭声音" : "🔈 开启声音";
+        const status = $("audio-status");
+        if (status) {
+          status.textContent = audioState.enabled
+            ? `${audioState.sourceName} · 声音模拟中`
+            : `声音关闭 · ${audioState.sourceName}`;
+        }
+      }
+
+      function startAudioBuffer(buffer, name) {
+        const graph = ensureAudioGraph();
+        if (audioState.source) {
+          try { audioState.source.stop(); } catch (_error) { /* already stopped */ }
+          try { audioState.source.disconnect(); } catch (_error) { /* ignore */ }
+        }
+        const source = graph.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(graph.input);
+        source.start();
+        audioState.source = source;
+        audioState.sourceName = name;
+        updateAudioUI();
+      }
+
+      async function setAudioEnabled(enabled) {
+        const graph = ensureAudioGraph();
+        if (enabled) {
+          await graph.ctx.resume();
+          if (!audioState.source) {
+            if (!audioState.ambientBuffer) audioState.ambientBuffer = createAmbientBuffer(graph.ctx);
+            startAudioBuffer(audioState.ambientBuffer, "内置环境音");
+          }
+          graph.output.gain.cancelScheduledValues(graph.ctx.currentTime);
+          graph.output.gain.setTargetAtTime(audioState.volume, graph.ctx.currentTime, 0.2);
+          audioState.enabled = true;
+        } else {
+          graph.output.gain.setTargetAtTime(0, graph.ctx.currentTime, 0.12);
+          audioState.enabled = false;
+          audioState.meter = 0;
+        }
+        updateAudioUI();
+        applyAudioUniforms(audioState.profile);
+      }
+
+      async function toggleAudio() {
+        try {
+          await setAudioEnabled(!audioState.enabled);
+        } catch (error) {
+          reportError("声音模拟启动失败: " + error.message);
+        }
+      }
+
+      async function useAmbientAudio() {
+        try {
+          const graph = ensureAudioGraph();
+          await graph.ctx.resume();
+          if (!audioState.ambientBuffer) audioState.ambientBuffer = createAmbientBuffer(graph.ctx);
+          startAudioBuffer(audioState.ambientBuffer, "内置环境音");
+          if (!audioState.enabled) await setAudioEnabled(true);
+          showToast("已切换到内置环境音", "info", 1600);
+        } catch (error) {
+          reportError("环境音启动失败: " + error.message);
+        }
+      }
+
+      async function loadAudioFile(file) {
+        if (!file) return;
+        try {
+          const graph = ensureAudioGraph();
+          await graph.ctx.resume();
+          const data = await file.arrayBuffer();
+          const buffer = await graph.ctx.decodeAudioData(data);
+          audioState.fileBuffer = buffer;
+          audioState.fileName = file.name;
+          startAudioBuffer(buffer, file.name);
+          if (!audioState.enabled) await setAudioEnabled(true);
+          showToast("已载入音频: " + file.name, "success", 2200);
+        } catch (error) {
+          reportError("音频解码失败: " + error.message);
+        }
+      }
+
+      function applyAudioUniforms(uniforms) {
+        if (uniforms) audioState.profile = uniforms;
+        const profile = audioState.profile;
+        const label = $("audio-profile");
+        if (label) {
+          label.textContent = profile && profile.active
+            ? `aud ${fmt2(profile.clarity)} · supp ${fmt2(profile.suppression)} · dist ${fmt2(profile.distortion)} · hall ${fmt2(profile.hallucination)}`
+            : "no active auditory profile";
+          label.title = label.textContent;
+        }
+        const graph = audioState.graph;
+        if (!graph) return;
+        const value = (key) => Math.max(0, Math.min(1, Number(profile && profile[key]) || 0));
+        const now = graph.ctx.currentTime;
+        const cutoff = clampNumber(
+          19000 - value("suppression") * 12000 - value("sedation") * 5500
+          - value("dissociation") * 2500 + value("clarity") * 1500,
+          500, 20000,
+        );
+        graph.lowpass.frequency.setTargetAtTime(cutoff, now, 0.35);
+        graph.highShelf.gain.setTargetAtTime(value("clarity") * 9 - value("suppression") * 3 + value("arousal") * 2, now, 0.35);
+        graph.shaper.curve = graph.curves[Math.round(value("distortion") * 10)];
+        graph.delay.delayTime.setTargetAtTime(0.12 + value("time_warp") * 0.55, now, 0.35);
+        graph.feedback.gain.setTargetAtTime(0.05 + value("time_warp") * 0.52, now, 0.35);
+        graph.wet.gain.setTargetAtTime(0.05 + value("time_warp") * 0.45, now, 0.35);
+        graph.ghostGain.gain.setTargetAtTime(value("hallucination") * 0.055, now, 0.4);
+        graph.ghost1.frequency.setTargetAtTime(180 + value("hallucination") * 90 + value("time_warp") * 20, now, 0.5);
+        graph.ghost2.frequency.setTargetAtTime(270 + value("hallucination") * 140, now, 0.5);
+        graph.ghostLfo.frequency.setTargetAtTime(0.05 + value("arousal") * 0.35, now, 0.5);
+        graph.tinnitusGain.gain.setTargetAtTime(value("tinnitus") * 0.018, now, 0.4);
+      }
+
+      function updateAudioMeter() {
+        if (!audioState.enabled || !audioState.graph) {
+          audioState.meter *= 0.86;
+          if (audioState.meter < 0.001) audioState.meter = 0;
+          return;
+        }
+        const analyser = audioState.graph.analyser;
+        if (!audioState.timeData || audioState.timeData.length !== analyser.fftSize) {
+          audioState.timeData = new Uint8Array(analyser.fftSize);
+        }
+        analyser.getByteTimeDomainData(audioState.timeData);
+        let sum = 0;
+        for (let index = 0; index < audioState.timeData.length; index += 1) {
+          const centered = (audioState.timeData[index] - 128) / 128;
+          sum += centered * centered;
+        }
+        const rms = Math.sqrt(sum / audioState.timeData.length);
+        const target = Math.min(1, rms * 2.4);
+        audioState.meter = audioState.meter * 0.82 + target * 0.18;
+      }
+
       function frameLoop(now) {
         if (!gl || runtime.contextLost) return;
         try {
@@ -1514,6 +1804,7 @@
       function renderFrame(now) {
         const canvas = $("gl-canvas");
         resizeGL();
+        updateAudioMeter();
 
         if (webcamActive) {
           const video = $("webcam-video");
@@ -1564,6 +1855,8 @@
         gl.uniform1f(mainUniforms.u_cubism, Number(activeUniforms.cubism) || 0);
         gl.uniform1f(mainUniforms.u_vortex, Number(activeUniforms.vortex) || 0);
         gl.uniform1f(mainUniforms.u_shatter, Number(activeUniforms.shatter) || 0);
+        gl.uniform1f(mainUniforms.u_audio_energy, audioState.enabled ? audioState.meter : 0);
+        gl.uniform1f(mainUniforms.u_synaesthesia, Number(audioState.profile?.synaesthesia) || 0);
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
@@ -2202,9 +2495,13 @@
         $("export-modal").classList.add("hidden");
       }
 
-      function pickRecordingMimeType() {
+      function pickRecordingMimeType(includeAudio = false) {
         if (typeof MediaRecorder === "undefined") return "";
-        const candidates = [
+        const candidates = includeAudio ? [
+          "video/webm;codecs=vp9,opus",
+          "video/webm;codecs=vp8,opus",
+          "video/webm"
+        ] : [
           "video/webm;codecs=vp9",
           "video/webm;codecs=vp8",
           "video/webm"
@@ -2228,15 +2525,21 @@
         if (exportState.recording) return;
         const canvas = $("gl-canvas");
         if (!canvas.captureStream) throw new Error("当前浏览器不支持 canvas.captureStream()");
-        const mimeType = pickRecordingMimeType();
+        const includeAudio = audioState.enabled && audioState.graph && audioState.graph.mediaDest;
+        const mimeType = pickRecordingMimeType(includeAudio);
         if (!mimeType) throw new Error("当前浏览器不支持 WebM 录制");
 
         const fps = clampNumber(parseInt($("export-fps").value, 10) || 30, 1, 60);
         const duration = clampNumber(parseFloat($("export-duration").value) || 10, 1, 120);
         const stream = canvas.captureStream(fps);
+        if (includeAudio) {
+          const audioTrack = audioState.graph.mediaDest.stream.getAudioTracks()[0];
+          if (audioTrack) stream.addTrack(audioTrack.clone());
+        }
         const recorder = new MediaRecorder(stream, {
           mimeType,
-          videoBitsPerSecond: 12_000_000
+          videoBitsPerSecond: 12_000_000,
+          audioBitsPerSecond: 128_000
         });
 
         exportState.recording = true;
@@ -2593,6 +2896,36 @@
         const aliases = (item.aliases || []).length
           ? `<div class="mt-1 text-[11px] text-slate-500">别名：${item.aliases.map(escapeHtml).join("、")}</div>`
           : "";
+
+        const audio = item.audio_profile;
+        const audioDimensions = [
+          ["clarity", "清晰度"], ["suppression", "抑制"], ["distortion", "畸变"],
+          ["hallucination", "幻听"], ["synaesthesia", "联觉"], ["time_warp", "时间拉伸"],
+          ["dissociation", "解离"], ["tinnitus", "耳鸣"], ["arousal", "唤醒"],
+          ["sedation", "镇静"], ["intensity", "总体"],
+        ];
+        const audioHtml = audio && audio.scores
+          ? `<div class="mt-3 rounded-lg border border-cyan-500/20 bg-cyan-500/[0.06] p-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-cyan-300">听觉画像 (heuristic)</div>
+                <div class="text-[10px] text-slate-500">听觉效应 ${escapeHtml(audio.auditory_effect_count || 0)} 条</div>
+              </div>
+              <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                ${audioDimensions.map(([key, label]) => {
+                  const value = Number(audio.scores[key]) || 0;
+                  return `<div class="flex items-center gap-1.5">
+                    <span class="w-12 shrink-0 text-[10px] text-slate-400">${label}</span>
+                    <span class="h-1 flex-1 overflow-hidden rounded bg-white/10"><span class="block h-1 rounded bg-cyan-400" style="width:${Math.round(value * 100)}%"></span></span>
+                    <span class="w-7 text-right font-mono text-[10px] text-cyan-300">${value.toFixed(2)}</span>
+                  </div>`;
+                }).join("")}
+              </div>
+              <div class="mt-2 truncate text-[10px] text-slate-500" title="${escapeHtml((audio.auditory_effects || []).join("、"))}">
+                听觉效应：${escapeHtml((audio.auditory_effects || []).slice(0, 6).join("、") || "—")}
+              </div>
+            </div>`
+          : "";
+
         const source = item.source || {};
         $("reference-detail").innerHTML = `
           <div class="flex flex-wrap items-baseline justify-between gap-2">
@@ -2607,6 +2940,7 @@
           <p class="mt-3 text-slate-300">${escapeHtml(item.summary)}</p>
           <div class="mt-3 flex flex-wrap gap-1.5">${tags}</div>
           <div class="mt-1 text-[10px] text-slate-600">标签强度为启发式映射；悬停效应名可查看 PW 简短描述，虚线表示未收录于 SEI 分类树。</div>
+          ${audioHtml}
           ${groupsHtml}
           <div class="mt-4 border-t border-white/10 pt-2 text-[10px] text-slate-500">
             数据来自 <a class="text-cyan-400 hover:underline" href="https://psychonautwiki.org/wiki/Subjective_effect_index" target="_blank" rel="noopener">PsychonautWiki</a>
@@ -2681,9 +3015,6 @@
           showToast("已载入 LSD + MDMA + Ketamine 协同示例", "success", 2400);
         });
 
-        $("btn-preset-cubism").addEventListener("click", applyCubismPreset);
-        $("btn-cubism-demo").addEventListener("click", applyCubismPreset);
-
         $("slider-time").addEventListener("input", (event) => {
           stopAutoplay();
           if (videoState.active && videoState.mode === "video") setVideoMode("timeline");
@@ -2755,6 +3086,22 @@
         });
 
         $("btn-webcam").addEventListener("click", toggleWebcam);
+
+        $("btn-audio-toggle").addEventListener("click", toggleAudio);
+        $("btn-audio-ambient").addEventListener("click", useAmbientAudio);
+        $("btn-audio-upload").addEventListener("click", () => $("audio-file").click());
+        $("audio-file").addEventListener("change", (event) => {
+          const file = event.target.files && event.target.files[0];
+          event.target.value = "";
+          if (file) loadAudioFile(file);
+        });
+        $("audio-volume").addEventListener("input", (event) => {
+          audioState.volume = clampNumber(Number(event.target.value) || 0, 0, 1);
+          const graph = audioState.graph;
+          if (graph && audioState.enabled) {
+            graph.output.gain.setTargetAtTime(audioState.volume, graph.ctx.currentTime, 0.1);
+          }
+        });
 
         $("btn-reference").addEventListener("click", openReferenceModal);
         $("btn-close-reference").addEventListener("click", closeReferenceModal);
@@ -2857,6 +3204,11 @@
         window.addEventListener("beforeunload", () => {
           stopWebcam();
           try {
+            if (audioState.ctx && audioState.ctx.state !== "closed") audioState.ctx.close();
+          } catch (_error) {
+            // 页面卸载阶段忽略
+          }
+          try {
             if (exportState.recorder && exportState.recorder.state !== "inactive") {
               exportState.recorder.stop();
             }
@@ -2927,6 +3279,14 @@
             export: {
               recording: exportState.recording,
               lastExport: exportState.lastExport
+            },
+            audio: {
+              enabled: audioState.enabled,
+              sourceName: audioState.sourceName,
+              volume: audioState.volume,
+              meter: Number(audioState.meter.toFixed(3)),
+              contextState: audioState.ctx ? audioState.ctx.state : null,
+              profile: audioState.profile
             },
             ingestions: ingestions.map((item) => ({ ...item })),
             errors: runtime.errors.slice()

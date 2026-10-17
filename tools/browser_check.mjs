@@ -45,6 +45,7 @@ const chrome = spawn(chromePath, [
   "--no-default-browser-check",
   "--disable-extensions",
   "--disable-background-networking",
+  "--autoplay-policy=no-user-gesture-required",
   `--window-size=${WINDOW_SIZE}`,
   ...(process.env.BROWSER_FAKE_MEDIA ? ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] : []),
   `--user-data-dir=${PROFILE}`,
@@ -124,7 +125,7 @@ try {
   await sleep(5000); // 等待 API、WebGL 初始化与若干帧渲染
 
   if (PRE_EVAL) {
-    const evalResult = await send("Runtime.evaluate", { expression: PRE_EVAL, awaitPromise: true, returnByValue: true });
+    const evalResult = await send("Runtime.evaluate", { expression: PRE_EVAL, awaitPromise: true, returnByValue: true, userGesture: true });
     if (evalResult.exceptionDetails) {
       errors.push(evalResult.exceptionDetails.text || "预执行表达式抛出异常");
     } else if (evalResult.result?.value !== undefined) {
